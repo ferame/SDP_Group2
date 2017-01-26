@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jssc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/jssc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/v4l4j.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
