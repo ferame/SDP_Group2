@@ -129,6 +129,8 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     port.propeller(0);
                     port.propeller(0);
                     break;
+                case "ping":
+                    port.ping();
                 case "reset":
                     fred.ACTION_CONTROLLER.setAction(new Goto(fred, new ConstantPoint(0,0)));
                     break;
@@ -151,6 +153,12 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     break;
                 case "demo":
                     fred.ACTION_CONTROLLER.setAction(new Demo(fred));
+                    break;
+                case "demo2":
+                    fred.ACTION_CONTROLLER.setAction(new Demo2(fred));
+                    break;
+                case "demo3":
+                    fred.ACTION_CONTROLLER.setAction(new Demo3(fred));
                     break;
                 case "def":
                     fred.ACTION_CONTROLLER.setAction(new DefendGoal(fred));
@@ -219,6 +227,7 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+//        System.out.println(world);
         if(world != null){
             for(RobotBase robot : this.robots){
                 if(world.getRobot(robot.robotType) == null){

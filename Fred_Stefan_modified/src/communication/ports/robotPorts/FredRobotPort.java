@@ -15,7 +15,8 @@ public class FredRobotPort extends RobotPort implements PropellerEquipedRobotPor
 
     @Override
     public void fourWheelHolonomicMotion(double front, double back, double left, double right) {
-        this.sdpPort.commandSender("r", (int) front, (int) back, (int) left, (int) right);
+        //this.sdpPort.commandSender("r", (int) front, (int) back, (int) left, (int) right);
+        this.sdpPort.commandSender("r", (int) back, (int) left, (int) right);
     }
 
     @Override

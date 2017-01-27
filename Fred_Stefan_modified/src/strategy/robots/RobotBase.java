@@ -48,6 +48,7 @@ public abstract class RobotBase implements RobotInterface{
 
     @Override
     public void perform() {
+//        System.out.println("I'm performing");
         this.performAutomatic();
         this.performManual();
     }

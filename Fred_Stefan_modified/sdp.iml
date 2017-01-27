@@ -7,5 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="jssc" level="project" />
+    <orderEntry type="library" name="jssc" level="project" />
+    <orderEntry type="library" name="v4l4j" level="project" />
   </component>
 </module>
