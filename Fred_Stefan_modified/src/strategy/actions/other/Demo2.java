@@ -27,7 +27,7 @@ public class Demo2 extends ActionBase {
         } else {
             ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(-255,-255,-255,-255);
         }*/
-        ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(0,100,100,-100);
+        ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(0,100,100,100);
         this.state = newState;
     }
 

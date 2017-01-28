@@ -31,7 +31,7 @@ public class Demo3 extends ActionBase {
         int MAX_ROTATION = 30;
         int MAX_MOTION = 200;
         int factor = 1;
-        double x = 1, y = 0, w = 0.5;
+        double x = 0, y = 0, w = 0;
 
         double[][] a = new double[3][3];
         a[0][0] = 0.58; a[0][1] = -0.33; a[0][2] = 0.33;
@@ -60,6 +60,10 @@ public class Demo3 extends ActionBase {
         back = back/normalizer * 100;
         left = left/normalizer * 100;
         right = right/normalizer * 100;
+
+        back = 100;
+        left = -100;
+        right = 100;
 
         System.out.println(right);
         System.out.println(left);

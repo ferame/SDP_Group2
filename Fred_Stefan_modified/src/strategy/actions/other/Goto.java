@@ -23,9 +23,11 @@ public class Goto extends ActionBase {
         if(newState == 1){
             this.robot.MOTION_CONTROLLER.setDestination(this.point);
             this.robot.MOTION_CONTROLLER.setHeading(this.point);
+            System.out.println("Setting destination when newState = 1");
         } else {
             this.robot.MOTION_CONTROLLER.setDestination(null);
             this.robot.MOTION_CONTROLLER.setHeading(null);
+            System.out.println("Setting destination when newState != 1");
         }
         this.state = newState;
     }

@@ -44,6 +44,10 @@ public class MotionController extends ControllerBase {
         this.tolerance = tolerance;
     }
 
+    public int getTolerance(){
+        return this.tolerance;
+    }
+
     public void setDestination(DynamicPoint destination){
         this.destination = destination;
     }

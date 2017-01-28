@@ -17,6 +17,7 @@ public class OffensiveKick extends ActionBase {
     }
     @Override
     public void enterState(int newState) {
+        this.robot.MOTION_CONTROLLER.setTolerance(-10);
         this.robot.MOTION_CONTROLLER.setHeading(new BallPoint());
         this.robot.MOTION_CONTROLLER.setDestination(new BallPoint());
         if(newState == 0){

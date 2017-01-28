@@ -74,7 +74,8 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         } else {
             Robot us = Strategy.world.getRobot(this.robot.robotType);
             if(us == null){
-                // TODO: Angry yelling
+                System.out.println("I'm lost!!!");
+
             } else {
                 VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
                 if(us.location.distance(ourGoal) > ball.location.distance(ourGoal)){

@@ -21,7 +21,7 @@ public class FredRobotPort extends RobotPort implements PropellerEquipedRobotPor
 
     @Override
     public void propeller(int spin) {
-        this.sdpPort.commandSender("kick", spin);
+        this.sdpPort.commandSender("kick", -spin);
     }
 
 

@@ -25,6 +25,7 @@ public class ShuntKick extends ActionBase {
         if(newState == 0){
             this.robot.MOTION_CONTROLLER.setDestination(new BallPoint());
             this.robot.MOTION_CONTROLLER.setHeading(new ReverseBallDirection());
+            System.out.println("Making dem ass turn in ShuntKick");
             this.robot.MOTION_CONTROLLER.setTolerance(-1);
         }
         this.state = newState;
