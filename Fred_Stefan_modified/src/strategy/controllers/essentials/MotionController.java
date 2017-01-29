@@ -29,6 +29,8 @@ public class MotionController extends ControllerBase {
     private DynamicPoint heading = null;
     private DynamicPoint destination = null;
 
+    private int haveBall = 0;
+
     private int tolerance;
 
     private LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>();
@@ -132,22 +134,13 @@ public class MotionController extends ControllerBase {
                 // TODO if the ball is still near the robot after it has kicked move the robot and try to get the ball again.
                 // Use some boolean getA
                 else {
+                    haveBall = 1;
+                    navigation = new PotentialFieldNavigation();
                     ((FredRobotPort) this.robot.port).propeller(50);
                     ((FredRobotPort) this.robot.port).propeller(50);
                     ((FredRobotPort) this.robot.port).propeller(50);
                     System.out.println("Yay");
-                    //robot should face enemy goal
-                    this.robot.MOTION_CONTROLLER.setHeading(DynamicPointBase.getEnemyGoalPoint());
-                    // wait 0.5 seconds
-                    try {
-                        Thread.sleep(500);                 //1000 milliseconds is one second.
-                    } catch(InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                    ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
+//                    this.robot.MOTION_CONTROLLER.setHeading(DynamicPointBase.getEnemyGoalPoint());
                 }
                 // Potential field navigation is disabled for now
 //                else {
@@ -160,8 +153,25 @@ public class MotionController extends ControllerBase {
 //                }
 
             }
-
-            navigation.setDestination(new VectorGeometry(destination.x, destination.y));
+            if (haveBall == 1) {
+                  //navigation.setHeading(DynamicPointBase.getEnemyGoalPoint());
+                System.out.println("Facing enemy goal");
+                navigation.setHeading(new VectorGeometry(Constants.PITCH_WIDTH/2, 0));
+                try {
+                    Thread.sleep(500);                 //1000 milliseconds is one second.
+                } catch(InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                System.out.println("Kicking");
+                ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+                ((FredRobotPort) this.robot.port).propeller(-100);
+                ((FredRobotPort) this.robot.port).propeller(-100);
+                ((FredRobotPort) this.robot.port).propeller(-100);
+                haveBall ++;
+            }
+            else {
+                navigation.setDestination(new VectorGeometry(destination.x, destination.y));
+            }
 
 
         } else {
