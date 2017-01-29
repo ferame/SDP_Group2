@@ -9,11 +9,13 @@ import strategy.navigation.Obstacle;
 import strategy.points.DynamicPoint;
 import strategy.navigation.aStarNavigation.AStarNavigation;
 import strategy.navigation.potentialFieldNavigation.PotentialFieldNavigation;
+import strategy.points.DynamicPointBase;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import strategy.GUI;
 import vision.Robot;
 import vision.RobotType;
+import vision.constants.Constants;
 import vision.tools.VectorGeometry;
 
 import java.util.LinkedList;
@@ -101,7 +103,7 @@ public class MotionController extends ControllerBase {
                 //System.out.println("Check potential obstacle");
 
             }
-
+            // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
             if( //intersects ||
                     ( us.location.distance(destination) > 40)){
                 navigation = new AStarNavigation();
@@ -113,7 +115,9 @@ public class MotionController extends ControllerBase {
                 ((FredRobotPort) this.robot.port).propeller(0);
                 ((FredRobotPort) this.robot.port).propeller(0);
 
-            } else {
+            } else
+                // Robot is getting close to the ball
+                {
                 if( us.location.distance(destination) > 19 && us.location.distance(destination) < 40){
                     navigation = new AStarNavigation();
                     GUI.gui.searchType.setText("A*");
@@ -124,15 +128,36 @@ public class MotionController extends ControllerBase {
                     ((FredRobotPort) this.robot.port).propeller(-100);
                     ((FredRobotPort) this.robot.port).propeller(-100);
 
-                } else {
-                    navigation = new PotentialFieldNavigation();
+                }
+                // TODO if the ball is still near the robot after it has kicked move the robot and try to get the ball again.
+                // Use some boolean getA
+                else {
                     ((FredRobotPort) this.robot.port).propeller(50);
                     ((FredRobotPort) this.robot.port).propeller(50);
                     ((FredRobotPort) this.robot.port).propeller(50);
                     System.out.println("Yay");
-                    GUI.gui.searchType.setText("Potential Fields");
-                    System.out.println("Potential Field Navigation");
+                    //robot should face enemy goal
+                    this.robot.MOTION_CONTROLLER.setHeading(DynamicPointBase.getEnemyGoalPoint());
+                    // wait 0.5 seconds
+                    try {
+                        Thread.sleep(500);                 //1000 milliseconds is one second.
+                    } catch(InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                    ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+                    ((FredRobotPort) this.robot.port).propeller(-100);
+                    ((FredRobotPort) this.robot.port).propeller(-100);
+                    ((FredRobotPort) this.robot.port).propeller(-100);
                 }
+                // Potential field navigation is disabled for now
+//                else {
+//                    navigation = new PotentialFieldNavigation();
+//                    ((FredRobotPort) this.robot.port).propeller(50);
+//                    ((FredRobotPort) this.robot.port).propeller(50);
+//                    ((FredRobotPort) this.robot.port).propeller(50);
+//                    GUI.gui.searchType.setText("Potential Fields");
+//                    System.out.println("Potential Field Navigation");
+//                }
 
             }
 
