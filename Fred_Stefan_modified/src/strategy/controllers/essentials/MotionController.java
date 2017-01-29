@@ -1,12 +1,15 @@
 package strategy.controllers.essentials;
 
+import communication.ports.robotPorts.FredRobotPort;
 import strategy.Strategy;
+import strategy.actions.other.Stop;
 import strategy.controllers.ControllerBase;
 import strategy.navigation.NavigationInterface;
 import strategy.navigation.Obstacle;
 import strategy.points.DynamicPoint;
 import strategy.navigation.aStarNavigation.AStarNavigation;
 import strategy.navigation.potentialFieldNavigation.PotentialFieldNavigation;
+import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import strategy.GUI;
 import vision.Robot;
@@ -87,20 +90,50 @@ public class MotionController extends ControllerBase {
 
             for(Obstacle o : this.obstacles){
                 intersects = intersects || o.intersects(us.location, destination);
+                //System.out.println("Check Obstacle");
             }
 
             for(Robot r : Strategy.world.getRobots()){
                 if(r != null && r.type != RobotType.FRIEND_2){
                     intersects = intersects || VectorGeometry.vectorToClosestPointOnFiniteLine(us.location, destination, r.location).minus(r.location).length() < 30;
+                    //System.out.println("Found potential obstacle");
                 }
+                //System.out.println("Check potential obstacle");
+
             }
 
-            if(intersects || us.location.distance(destination) > 30){
+            if( //intersects ||
+                    ( us.location.distance(destination) > 40)){
                 navigation = new AStarNavigation();
                 GUI.gui.searchType.setText("A*");
+                System.out.println("A* Prop down");
+
+                ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(false);
+                ((FredRobotPort) this.robot.port).propeller(0);
+                ((FredRobotPort) this.robot.port).propeller(0);
+                ((FredRobotPort) this.robot.port).propeller(0);
+
             } else {
-                navigation = new PotentialFieldNavigation();
-                GUI.gui.searchType.setText("Potential Fields");
+                if( us.location.distance(destination) > 19 && us.location.distance(destination) < 40){
+                    navigation = new AStarNavigation();
+                    GUI.gui.searchType.setText("A*");
+                    System.out.print("A* Prop up ");
+                    System.out.println( us.location.distance(destination));
+                    ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+                    ((FredRobotPort) this.robot.port).propeller(-100);
+                    ((FredRobotPort) this.robot.port).propeller(-100);
+                    ((FredRobotPort) this.robot.port).propeller(-100);
+
+                } else {
+                    navigation = new PotentialFieldNavigation();
+                    ((FredRobotPort) this.robot.port).propeller(50);
+                    ((FredRobotPort) this.robot.port).propeller(50);
+                    ((FredRobotPort) this.robot.port).propeller(50);
+                    System.out.println("Yay");
+                    GUI.gui.searchType.setText("Potential Fields");
+                    System.out.println("Potential Field Navigation");
+                }
+
             }
 
             navigation.setDestination(new VectorGeometry(destination.x, destination.y));
