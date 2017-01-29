@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/jssc.jar"/>
+	<classpathentry kind="lib" path="libs/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="libs/v4l4j.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/libv4l4j.so"/>
+	<classpathentry kind="lib" path="libs/libvideo.so.0"/>
+	<classpathentry kind="output" path="out/production/Fred_Stefan_modified"/>
+</classpath>
