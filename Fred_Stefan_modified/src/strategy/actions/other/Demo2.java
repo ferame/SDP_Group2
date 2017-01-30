@@ -1,6 +1,7 @@
 package strategy.actions.other;
 
 import communication.ports.interfaces.FourWheelHolonomicRobotPort;
+import communication.ports.robotPorts.FredRobotPort;
 import strategy.actions.ActionBase;
 import strategy.actions.ActionException;
 import strategy.robots.Fred;
@@ -27,7 +28,15 @@ public class Demo2 extends ActionBase {
         } else {
             ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(-255,-255,-255,-255);
         }*/
-        ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(0,100,100,100);
+        ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+        ((FredRobotPort) this.robot.port).propeller(50);
+        try {
+            Thread.sleep(1000);
+        }
+        catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        ((FredRobotPort) this.robot.port).propeller(0);
         this.state = newState;
     }
 
