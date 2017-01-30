@@ -9,11 +9,13 @@ import strategy.navigation.Obstacle;
 import strategy.points.DynamicPoint;
 import strategy.navigation.aStarNavigation.AStarNavigation;
 import strategy.navigation.potentialFieldNavigation.PotentialFieldNavigation;
+import strategy.points.DynamicPointBase;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import strategy.GUI;
 import vision.Robot;
 import vision.RobotType;
+import vision.constants.Constants;
 import vision.tools.VectorGeometry;
 
 import java.util.LinkedList;
@@ -26,6 +28,8 @@ public class MotionController extends ControllerBase {
     public MotionMode mode;
     private DynamicPoint heading = null;
     private DynamicPoint destination = null;
+
+    private int haveBall = 0;
 
     private int tolerance;
 
@@ -80,7 +84,7 @@ public class MotionController extends ControllerBase {
 
 
 
-        if(this.destination != null){
+        if(this.destination != null && haveBall != 1){
             this.destination.recalculate();
 
             destination = new VectorGeometry(this.destination.getX(), this.destination.getY());
@@ -101,10 +105,11 @@ public class MotionController extends ControllerBase {
                 //System.out.println("Check potential obstacle");
 
             }
-
+            // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
             if( //intersects ||
                     ( us.location.distance(destination) > 40)){
                 navigation = new AStarNavigation();
+                navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
                 System.out.println("A* Prop down");
 
@@ -113,30 +118,70 @@ public class MotionController extends ControllerBase {
                 ((FredRobotPort) this.robot.port).propeller(0);
                 ((FredRobotPort) this.robot.port).propeller(0);
 
-            } else {
-                if( us.location.distance(destination) > 19 && us.location.distance(destination) < 40){
+            } else
+                // Robot is getting close to the ball
+                {
+                if( us.location.distance(destination) > 21 && us.location.distance(destination) < 40){
                     navigation = new AStarNavigation();
+                    navigation.setHeading(destination);
                     GUI.gui.searchType.setText("A*");
                     System.out.print("A* Prop up ");
                     System.out.println( us.location.distance(destination));
                     ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
 
-                } else {
-                    navigation = new PotentialFieldNavigation();
-                    ((FredRobotPort) this.robot.port).propeller(50);
-                    ((FredRobotPort) this.robot.port).propeller(50);
-                    ((FredRobotPort) this.robot.port).propeller(50);
-                    System.out.println("Yay");
-                    GUI.gui.searchType.setText("Potential Fields");
-                    System.out.println("Potential Field Navigation");
                 }
+                // TODO if the ball is still near the robot after it has kicked move the robot and try to get the ball again.
+                // Use some boolean getA
+                else {
+                    haveBall = 1;
+                    navigation = new PotentialFieldNavigation();
+                    navigation.setHeading(destination);
+                    navigation.setDestination(null);
+                    ((FredRobotPort) this.robot.port).propeller(-50);
+                    ((FredRobotPort) this.robot.port).propeller(-50);
+                    ((FredRobotPort) this.robot.port).propeller(-50);
+                    System.out.println("Yay");
+//                    this.robot.MOTION_CONTROLLER.setHeading(DynamicPointBase.getEnemyGoalPoint());
+                }
+                // Potential field navigation is disabled for now
+//                else {
+//                    navigation = new PotentialFieldNavigation();
+//                    ((FredRobotPort) this.robot.port).propeller(50);
+//                    ((FredRobotPort) this.robot.port).propeller(50);
+//                    ((FredRobotPort) this.robot.port).propeller(50);
+//                    GUI.gui.searchType.setText("Potential Fields");
+//                    System.out.println("Potential Field Navigation");
+//                }
 
             }
-
-            navigation.setDestination(new VectorGeometry(destination.x, destination.y));
+            if (haveBall == 1) {
+                  //navigation.setHeading(DynamicPointBase.getEnemyGoalPoint());
+                System.out.println("Facing enemy goal");
+                navigation = new PotentialFieldNavigation();
+                navigation.setDestination(null);
+                navigation.setHeading(new VectorGeometry(Constants.PITCH_WIDTH/2, 0));
+                try {
+                    Thread.sleep(500);                 //1000 milliseconds is one second.
+                    System.out.println("Kicking");
+                    ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    Thread.sleep(500);
+                    ((FredRobotPort) this.robot.port).propeller(0);
+                    ((FredRobotPort) this.robot.port).propeller(0);
+                    ((FredRobotPort) this.robot.port).propeller(0);
+                    haveBall = 0;
+                } catch(InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            else {
+                navigation.setDestination(new VectorGeometry(destination.x, destination.y));
+            }
 
 
         } else {
