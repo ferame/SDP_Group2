@@ -84,7 +84,7 @@ public class MotionController extends ControllerBase {
 
 
 
-        if(this.destination != null){
+        if(this.destination != null && haveBall != 1){
             this.destination.recalculate();
 
             destination = new VectorGeometry(this.destination.getX(), this.destination.getY());
@@ -109,6 +109,7 @@ public class MotionController extends ControllerBase {
             if( //intersects ||
                     ( us.location.distance(destination) > 40)){
                 navigation = new AStarNavigation();
+                navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
                 System.out.println("A* Prop down");
 
@@ -120,15 +121,16 @@ public class MotionController extends ControllerBase {
             } else
                 // Robot is getting close to the ball
                 {
-                if( us.location.distance(destination) > 19 && us.location.distance(destination) < 40){
+                if( us.location.distance(destination) > 21 && us.location.distance(destination) < 40){
                     navigation = new AStarNavigation();
+                    navigation.setHeading(destination);
                     GUI.gui.searchType.setText("A*");
                     System.out.print("A* Prop up ");
                     System.out.println( us.location.distance(destination));
                     ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
-                    ((FredRobotPort) this.robot.port).propeller(-100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
 
                 }
                 // TODO if the ball is still near the robot after it has kicked move the robot and try to get the ball again.
@@ -136,9 +138,11 @@ public class MotionController extends ControllerBase {
                 else {
                     haveBall = 1;
                     navigation = new PotentialFieldNavigation();
-                    ((FredRobotPort) this.robot.port).propeller(50);
-                    ((FredRobotPort) this.robot.port).propeller(50);
-                    ((FredRobotPort) this.robot.port).propeller(50);
+                    navigation.setHeading(destination);
+                    navigation.setDestination(null);
+                    ((FredRobotPort) this.robot.port).propeller(-50);
+                    ((FredRobotPort) this.robot.port).propeller(-50);
+                    ((FredRobotPort) this.robot.port).propeller(-50);
                     System.out.println("Yay");
 //                    this.robot.MOTION_CONTROLLER.setHeading(DynamicPointBase.getEnemyGoalPoint());
                 }
@@ -156,18 +160,24 @@ public class MotionController extends ControllerBase {
             if (haveBall == 1) {
                   //navigation.setHeading(DynamicPointBase.getEnemyGoalPoint());
                 System.out.println("Facing enemy goal");
+                navigation = new PotentialFieldNavigation();
+                navigation.setDestination(null);
                 navigation.setHeading(new VectorGeometry(Constants.PITCH_WIDTH/2, 0));
                 try {
                     Thread.sleep(500);                 //1000 milliseconds is one second.
+                    System.out.println("Kicking");
+                    ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                    Thread.sleep(500);
+                    ((FredRobotPort) this.robot.port).propeller(0);
+                    ((FredRobotPort) this.robot.port).propeller(0);
+                    ((FredRobotPort) this.robot.port).propeller(0);
+                    haveBall = 0;
                 } catch(InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
-                System.out.println("Kicking");
-                ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
-                ((FredRobotPort) this.robot.port).propeller(-100);
-                ((FredRobotPort) this.robot.port).propeller(-100);
-                ((FredRobotPort) this.robot.port).propeller(-100);
-                haveBall ++;
             }
             else {
                 navigation.setDestination(new VectorGeometry(destination.x, destination.y));
