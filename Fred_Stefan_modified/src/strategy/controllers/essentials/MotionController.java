@@ -10,10 +10,14 @@ import strategy.points.DynamicPoint;
 import strategy.navigation.aStarNavigation.AStarNavigation;
 import strategy.navigation.potentialFieldNavigation.PotentialFieldNavigation;
 import strategy.points.DynamicPointBase;
+import strategy.points.basicPoints.BallPoint;
+import strategy.points.basicPoints.EnemyGoal;
+import strategy.points.basicPoints.RobotPoint;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import strategy.GUI;
 import vision.Robot;
+import vision.RobotAlias;
 import vision.RobotType;
 import vision.constants.Constants;
 import vision.tools.VectorGeometry;
@@ -29,7 +33,7 @@ public class MotionController extends ControllerBase {
     private DynamicPoint heading = null;
     private DynamicPoint destination = null;
 
-    private int haveBall = 0;
+    private int haveBall;
 
     private int tolerance;
 
@@ -110,7 +114,7 @@ public class MotionController extends ControllerBase {
                     ( us.location.distance(destination) > 50)){
                 haveBall = 0;
                 navigation = new AStarNavigation();
-                navigation.setHeading(destination);
+                ((Fred)this.robot).MOTION_CONTROLLER.setHeading(new BallPoint());
                 GUI.gui.searchType.setText("A*");
                 //System.out.println("A* Prop down");
 
@@ -125,7 +129,7 @@ public class MotionController extends ControllerBase {
                 if( us.location.distance(destination) > 21 && us.location.distance(destination) < 50){
                     haveBall = 0;
                     navigation = new AStarNavigation();
-                    navigation.setHeading(destination);
+                    ((Fred)this.robot).MOTION_CONTROLLER.setHeading(new BallPoint());
                     GUI.gui.searchType.setText("A*");
                     System.out.print("A* Prop up ");
                     System.out.println( us.location.distance(destination));
@@ -140,11 +144,9 @@ public class MotionController extends ControllerBase {
                 else {
                     haveBall = 1;
                     navigation = new AStarNavigation();
-                    navigation.setHeading(destination);
-                    navigation.setDestination(null);
-                    ((FredRobotPort) this.robot.port).propeller(-50);
-                    ((FredRobotPort) this.robot.port).propeller(-50);
-                    ((FredRobotPort) this.robot.port).propeller(-50);
+                        ((FredRobotPort) this.robot.port).propeller(-50);
+                        ((FredRobotPort) this.robot.port).propeller(-50);
+                        ((FredRobotPort) this.robot.port).propeller(-50);
 //                    System.out.println("Yay");
 //                    this.robot.MOTION_CONTROLLER.setHeading(DynamicPointBase.getEnemyGoalPoint());
                 }
@@ -162,9 +164,10 @@ public class MotionController extends ControllerBase {
             if (haveBall == 1) {
                 //navigation.setHeading(DynamicPointBase.getEnemyGoalPoint());
                 //System.out.println("Facing enemy goal");
-                navigation = new PotentialFieldNavigation();
+                navigation = new AStarNavigation();
+                ((Fred)this.robot).MOTION_CONTROLLER.setDestination(new RobotPoint(RobotAlias.FRED));
                 navigation.setDestination(us.location);
-                navigation.setHeading(new VectorGeometry(Constants.PITCH_WIDTH/2, 0));
+                ((Fred)this.robot).MOTION_CONTROLLER.setHeading(new EnemyGoal());
             }
             else {
                 navigation.setDestination(new VectorGeometry(destination.x, destination.y));
@@ -232,6 +235,7 @@ public class MotionController extends ControllerBase {
                 ((FredRobotPort) this.robot.port).propeller(0);
                 ((FredRobotPort) this.robot.port).propeller(0);
                 haveBall = 0;
+                ((Fred)this.robot).MOTION_CONTROLLER.setHeading(new BallPoint());
             } catch(InterruptedException ex) {
                 System.out.print("ERROR");
                 Thread.currentThread().interrupt();
