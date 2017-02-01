@@ -10,6 +10,8 @@ import strategy.points.DynamicPoint;
 import strategy.navigation.aStarNavigation.AStarNavigation;
 import strategy.navigation.potentialFieldNavigation.PotentialFieldNavigation;
 import strategy.points.DynamicPointBase;
+import strategy.points.basicPoints.BallPoint;
+import strategy.points.basicPoints.EnemyGoal;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import strategy.GUI;
@@ -110,6 +112,7 @@ public class MotionController extends ControllerBase {
                     ( us.location.distance(destination) > 40)){
                 navigation = new AStarNavigation();
                 navigation.setHeading(destination);
+                ((Fred)this.robot).MOTION_CONTROLLER.setHeading(new BallPoint());
                 GUI.gui.searchType.setText("A*");
                 System.out.println("A* Prop down");
 
@@ -124,6 +127,7 @@ public class MotionController extends ControllerBase {
                 if( us.location.distance(destination) > 21 && us.location.distance(destination) < 40){
                     navigation = new AStarNavigation();
                     navigation.setHeading(destination);
+                    ((Fred)this.robot).MOTION_CONTROLLER.setHeading(new BallPoint());
                     GUI.gui.searchType.setText("A*");
                     System.out.print("A* Prop up ");
                     System.out.println( us.location.distance(destination));
@@ -139,6 +143,7 @@ public class MotionController extends ControllerBase {
                     haveBall = 1;
                     navigation = new PotentialFieldNavigation();
                     navigation.setHeading(destination);
+                    //navigation.setDestination(us.location);
                     navigation.setDestination(null);
                     ((FredRobotPort) this.robot.port).propeller(-50);
                     ((FredRobotPort) this.robot.port).propeller(-50);
