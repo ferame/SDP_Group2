@@ -29,7 +29,7 @@ public class MotionController extends ControllerBase {
     private DynamicPoint heading = null;
     private DynamicPoint destination = null;
 
-    private int haveBall = 0;
+    private int haveBall = 1;
 
 
     private int tolerance;
@@ -175,7 +175,8 @@ public class MotionController extends ControllerBase {
             navigation.setDestination(new VectorGeometry(destination.x, destination.y));
 
 
-        } else {
+        }
+        else {
             return;
         }
 
@@ -217,12 +218,51 @@ public class MotionController extends ControllerBase {
     }
 
     // Not sure if necessary to have a separate from movement rotate class
+    // Use direction to make sure robot is facing the target.
     private void rotate(Robot us) {
-            //navigation.setHeading(DynamicPointBase.getEnemyGoalPoint());
-            System.out.println("Facing enemy goal");
-//            navigation = new PotentialFieldNavigation();
-//            navigation.setDestination(null);
-//            navigation.setHeading(new VectorGeometry(Constants.PITCH_WIDTH / 2, 0));
+        NavigationInterface navigation;
+
+        navigation = new PotentialFieldNavigation();
+        navigation.setHeading(new VectorGeometry(Constants.PITCH_WIDTH / 2, 0));
+//            System.out.println("Facing enemy goal");
+            navigation.setDestination(us.location);
+
+        VectorGeometry heading = null;
+
+        VectorGeometry destination = new VectorGeometry(us.location.x, us.location.y);
+
+        if (this.heading != null) {
+            this.heading.recalculate();
+            heading = new VectorGeometry(this.heading.getX(), this.heading.getY());
+            System.out.println("Direction " + us.location.direction);
+        } else {
+            System.out.println("Heading is null ");
+            heading = VectorGeometry.fromAngular(us.location.direction, 10, null);
+        }
+
+        VectorGeometry force = navigation.getForce();
+        if (force == null) {
+            this.robot.port.stop();
+            return;
+        }
+
+        VectorGeometry robotHeading = VectorGeometry.fromAngular(us.location.direction, 10, null);
+        VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, heading);
+
+        double factor = 0.7;
+        double rotation = VectorGeometry.signedAngle(robotToPoint, robotHeading);
+        if (this.destination != null && us.location.distance(destination) < tolerance) {
+            this.robot.port.stop();
+            return;
+        }
+        System.out.println("Rotation is: " + rotation);
+
+        if (rotation == 0 ){
+            System.out.println("STOP");
+        }
+
+        this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
+
 
     }
     // Only the actual kicking happens here. To be called either from perform (after check that robot is heading in the right direction) or from rotate
