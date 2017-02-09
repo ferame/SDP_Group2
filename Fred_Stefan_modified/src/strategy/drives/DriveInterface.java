@@ -25,6 +25,6 @@ public interface DriveInterface {
      * @param factor The required speed of motion.
      */
     void move(RobotPort port, DirectedPoint location, VectorGeometry force, double rotation, double factor);
-    void rotate(RobotPort port, DirectedPoint location, VectorGeometry force, double rotation, double factor);
+    void rotate(RobotPort port, double force);
 
 }

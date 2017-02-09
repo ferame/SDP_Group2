@@ -38,20 +38,15 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, -back, -left, right);
 
     }
-    public void rotate(RobotPort port, DirectedPoint location, VectorGeometry force, double rotation, double factor){
+
+    //TODO rotate slower when closser to the goal
+    public void rotate(RobotPort port, double force){
         assert(port instanceof FourWheelHolonomicRobotPort);
 
         double front = 0;
         double back = 30;
         double left = 30;
         double right = 30;
-
-//        double normalizer = Math.max(Math.max(Math.abs(left), Math.abs(right)), Math.max(Math.abs(front), Math.abs(back)));
-//        front = front / normalizer * this.MAX_MOTION;
-//        back  = back / normalizer * this.MAX_MOTION;
-//        left  = left / normalizer * this.MAX_MOTION;
-//        right = right / normalizer * this.MAX_MOTION;
-
 
 
         ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, -back, -left, right);
