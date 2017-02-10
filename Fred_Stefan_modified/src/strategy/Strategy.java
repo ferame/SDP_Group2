@@ -191,6 +191,14 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     fred.MOTION_CONTROLLER.setHeading(new EnemyGoal());
                     fred.MOTION_CONTROLLER.setDestination(new EnemyGoal());
                     break;
+                case "test1":
+                    fred.MOTION_CONTROLLER.setDestination(new EnemyGoal());
+                    fred.MOTION_CONTROLLER.setHeading(new EnemyGoal());
+                    Thread.sleep(2000);
+                    fred.ACTION_CONTROLLER.setAction(new OffensiveKick(fred));
+                    break;
+                    
+                    
             }
         }
 
