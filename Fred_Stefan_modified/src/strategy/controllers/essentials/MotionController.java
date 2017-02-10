@@ -1,15 +1,13 @@
 package strategy.controllers.essentials;
 
 import communication.ports.robotPorts.FredRobotPort;
+import strategy.StaticVariables;
 import strategy.Strategy;
-import strategy.actions.other.Stop;
 import strategy.controllers.ControllerBase;
 import strategy.navigation.NavigationInterface;
 import strategy.navigation.Obstacle;
 import strategy.points.DynamicPoint;
 import strategy.navigation.aStarNavigation.AStarNavigation;
-import strategy.navigation.potentialFieldNavigation.PotentialFieldNavigation;
-import strategy.points.DynamicPointBase;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import strategy.GUI;
@@ -19,6 +17,8 @@ import vision.constants.Constants;
 import vision.tools.VectorGeometry;
 
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.DoubleStream;
 
 /**
  * Created by Simon Rovder
@@ -77,11 +77,11 @@ public class MotionController extends ControllerBase {
         Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
         if (us == null) return;
 
-        // For now haveBall is always 0 and move function calls rotate (if ball is close to the robot), which then calls kick if we are facing the goal (this probably needs calibration)
+        // For now haveBall is always 0 and move function calls rotateTowardsGoal (if ball is close to the robot), which then calls kick if we are facing the goal (this probably needs calibration)
         if (haveBall == 0) {
             move(us);
         } else if (haveBall == 1){
-            rotate(us);
+            rotateTowardsGoal(us);
         }
         else  if (haveBall == 2) {
             kick(us);
@@ -98,6 +98,8 @@ public class MotionController extends ControllerBase {
 
         VectorGeometry heading = null;
         VectorGeometry destination = null;
+        StaticVariables.ballkicks = 0;
+
 
 
 
@@ -150,7 +152,7 @@ public class MotionController extends ControllerBase {
                     ((FredRobotPort) this.robot.port).propeller(-50);
                     ((FredRobotPort) this.robot.port).propeller(-50);
                     ((FredRobotPort) this.robot.port).propeller(-50);
-                    rotate(us);
+                    rotateTowardsGoal(us);
                     return;
                 }
                 // Potential field navigation is disabled for now
@@ -211,7 +213,7 @@ public class MotionController extends ControllerBase {
     }
 
     // Rotates the robot towards the goal
-    private void rotate(Robot us) {
+    private void rotateTowardsGoal(Robot us) {
         NavigationInterface navigation;
         VectorGeometry destination = null;
         VectorGeometry heading = null;
@@ -231,9 +233,13 @@ public class MotionController extends ControllerBase {
         VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, heading);
         double factor = 1;
         double rotation = VectorGeometry.signedAngle(robotToPoint, robotHeading);
+        StaticVariables.recentRotations[(int) StaticVariables.recentRotations[3]] = rotation;
+        StaticVariables.recentRotations[0] = StaticVariables.recentRotations[0] + 1 % 3;
+
+        rotation = StaticVariables.recentRotations[0] + StaticVariables.recentRotations[1] + StaticVariables.recentRotations[2] / 3;
 
         //When robot is ~ facing the enemy goal, kick
-        if ( rotation < 0.4 && rotation > -0.2) {
+        if ( rotation < 0.4 && rotation > -0.2 && StaticVariables.recentRotations[1] != 1) {
             this.robot.port.stop();
             kick(us);
         } else {
@@ -243,11 +249,12 @@ public class MotionController extends ControllerBase {
 
 
     }
-    // Only the actual kicking happens here. it is called from rotate
+    // Only the actual kicking happens here. it is called from rotateTowardsGoal
     private void kick(Robot us){
         ((FredRobotPort) this.robot.port).propeller(-50);
         ((FredRobotPort) this.robot.port).propeller(-50);
         ((FredRobotPort) this.robot.port).propeller(-50);
+        StaticVariables.ballkicks ++;
         try {
             Thread.sleep(500);
             System.out.println("Kicking");
@@ -262,6 +269,7 @@ public class MotionController extends ControllerBase {
             ((FredRobotPort) this.robot.port).propeller(0);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
+
         }
     }
 }
