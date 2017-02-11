@@ -31,12 +31,33 @@ public class FourWheelHolonomicDrive implements DriveInterface{
 
         double normalizer = Math.max(Math.max(Math.abs(left), Math.abs(right)), Math.max(Math.abs(front), Math.abs(back)));
         front = front / normalizer * this.MAX_MOTION;
-        back  = back / normalizer * this.MAX_MOTION;
-        left  = left / normalizer * this.MAX_MOTION;
-        right = right / normalizer * this.MAX_MOTION;
+        back  = adjustingMotors(1, back / normalizer * this.MAX_MOTION);
+        left  = adjustingMotors(2,left / normalizer * this.MAX_MOTION);
+        right = adjustingMotors(3,right / normalizer * this.MAX_MOTION);
 
         ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, back, left, -right);
 
+    }
+    //motors: front - 0, back - 1, left - 2, right - 3
+    public double adjustingMotors(int motor, double power){
+        int[] powers = new int[4];
+        powers[0] = 0;
+        powers[1] = 0;
+        powers[2] = 0;
+        powers[3] = 0;
+        boolean weakest = false;
+        if (motor == 2) {
+            weakest = true;
+        }
+        if(power > 93 && !weakest){
+            return power - powers[motor];
+        } else if (power > 93 && weakest){
+            return power;
+        } else if (!weakest){
+            return power;
+        } else {
+            return power + powers[motor];
+        }
     }
 
     //TODO rotate slower when closer to the goal
