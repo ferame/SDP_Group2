@@ -40,8 +40,9 @@ public class FourWheelHolonomicDrive implements DriveInterface{
     }
     //motors: front - 0, back - 1, left - 2, right - 3
     public double adjustingMotors(int motor, double power){
+        System.out.println("adjusting motor " + Integer.toString(motor));
         int[] powers = new int[4];
-        powers[0] = 0;
+//        powers[0] = 0;
         powers[1] = 0;
         powers[2] = 0;
         powers[3] = 0;
@@ -50,12 +51,16 @@ public class FourWheelHolonomicDrive implements DriveInterface{
             weakest = true;
         }
         if(power > 93 && !weakest){
+            System.out.println("power > 93 && !weakest");
             return power - powers[motor];
         } else if (power > 93 && weakest){
+            System.out.println("power > 93 && weakest");
             return power;
         } else if (!weakest){
+            System.out.println("!weakest");
             return power;
         } else {
+            System.out.println("weakest");
             return power + powers[motor];
         }
     }

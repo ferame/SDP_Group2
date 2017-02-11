@@ -57,13 +57,47 @@ public class Demo3 extends ActionBase {
         right = right*normalizer + w * MAX_ROTATION;*/
 
         double normalizer = Math.max(Math.max(Math.abs(left), Math.abs(right)), Math.max(Math.abs(front), Math.abs(back)));
-        back = back/normalizer * 100;
-        left = left/normalizer * 100;
-        right = right/normalizer * 100;
+//        back = back/normalizer * 100;
+//        back = adjustingMotors(1, back / normalizer * 100);
+        back = 0;
+        left = adjustingMotors(2, left/normalizer * -100);
+        right = adjustingMotors(3, right/normalizer * 100);
 
         ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(front, back, left, -right);
 
         this.state = newState;
+    }
+
+    //motors: front - 0, back - 1, left - 2, right - 3
+    public double adjustingMotors(int motor, double power){
+        System.out.println("adjusting motor " + Integer.toString(motor));
+        System.out.println("power is " + power);
+        int[] powers = new int[4];
+//        powers[0] = 0;
+        powers[1] = 0;
+        powers[2] = 0;
+        powers[3] = 0;
+        boolean weakest = false;
+        if (motor == 0) {
+            weakest = true;
+        }
+        if(power > 93 && !weakest){
+            System.out.println("power > 93 && !weakest");
+            System.out.println(power - powers[motor]);
+            return power - powers[motor];
+        } else if (power > 93 && weakest){
+            System.out.println("power > 93 && weakest");
+            System.out.println(power);
+            return power;
+        } else if (!weakest){
+            System.out.println("!weakest");
+            System.out.println(power);
+            return power;
+        } else {
+            System.out.println("weakest");
+            System.out.println(power + powers[motor]);
+            return power + powers[motor];
+        }
     }
 
     @Override
