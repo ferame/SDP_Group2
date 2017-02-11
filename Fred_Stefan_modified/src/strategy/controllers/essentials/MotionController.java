@@ -131,7 +131,9 @@ public class MotionController extends ControllerBase {
                 ((FredRobotPort) this.robot.port).propeller(0);
                 ((FredRobotPort) this.robot.port).propeller(0);
 
-            } else if (us.location.distance(destination) > 22 && us.location.distance(destination) < 50) {
+            }
+
+            else if (us.location.distance(destination) > 22 && us.location.distance(destination) < 50) {
                 StaticVariables.ballkicks = 0;
                 navigation = new AStarNavigation();
                 navigation.setHeading(destination);
@@ -213,6 +215,7 @@ public class MotionController extends ControllerBase {
     }
 
     // Rotates the robot towards the goal
+
     private void rotate(Robot us, VectorGeometry rotationDestination) {
         NavigationInterface navigation;
         VectorGeometry destination = null;

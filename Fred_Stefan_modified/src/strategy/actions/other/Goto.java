@@ -43,6 +43,7 @@ public class Goto extends ActionBase {
             this.enterState(2);
         } else {
             if(this.state == 0){
+                System.out.println("here");
                 this.enterState(1);
             }
         }

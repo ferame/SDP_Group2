@@ -49,7 +49,7 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         double right = 90;
 
 
-        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, -back, -left, right);
+        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, back, left, -right);
 
     }
 }
