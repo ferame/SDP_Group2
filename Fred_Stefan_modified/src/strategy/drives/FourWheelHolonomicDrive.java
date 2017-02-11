@@ -35,7 +35,7 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         left  = left / normalizer * this.MAX_MOTION;
         right = right / normalizer * this.MAX_MOTION;
 
-        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, -back, -left, right);
+        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, back, left, -right);
 
     }
 
@@ -49,7 +49,7 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         double right = 30;
 
 
-        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, -back, -left, right);
+        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, back, left, -right);
 
     }
 }

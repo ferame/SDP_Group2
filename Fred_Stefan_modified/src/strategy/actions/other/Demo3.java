@@ -31,7 +31,7 @@ public class Demo3 extends ActionBase {
         int MAX_ROTATION = 30;
         int MAX_MOTION = 200;
         int factor = 1;
-        double x = 0, y = 0, w = 0;
+        double x = 0, y = 1, w = 0;
 
         double[][] a = new double[3][3];
         a[0][0] = 0.58; a[0][1] = -0.33; a[0][2] = 0.33;
@@ -44,9 +44,9 @@ public class Demo3 extends ActionBase {
         a[2][0] = 1.0; a[2][1] = 0.0; a[2][2] = 1.0;*/
 
         double front = 0;
-        double back = a[2][0] * x + a[2][1] * y + a[2][2] * w;
-        double left = a[1][0] * x + a[1][1] * y + a[1][2] * w;
-        double right = a[0][0] * x + a[0][1] * y + a[0][2] * w;
+        double back = a[2][0] * x + a[2][1] * -y + a[2][2] * w;
+        double left = a[1][0] * x + a[1][1] * -y + a[1][2] * w;
+        double right = a[0][0] * x + a[0][1] * -y + a[0][2] * w;
 
         /*double lim = MAX_MOTION - Math.abs(MAX_ROTATION * factor);
         double normalizer = Math.max(Math.max(Math.abs(left), Math.abs(right)), Math.max(Math.abs(front), Math.abs(back)));
@@ -61,15 +61,7 @@ public class Demo3 extends ActionBase {
         left = left/normalizer * 100;
         right = right/normalizer * 100;
 
-        back = 100;
-        left = -100;
-        right = 100;
-
-        System.out.println(right);
-        System.out.println(left);
-        System.out.println(back);
-
-        ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(front, -back, -left, -right);
+        ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(front, back, left, -right);
 
         this.state = newState;
     }

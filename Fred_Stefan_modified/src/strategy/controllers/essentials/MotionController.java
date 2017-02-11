@@ -123,7 +123,7 @@ public class MotionController extends ControllerBase {
 
             }
             // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
-            if( /*intersects ||  */ us.location.distance(destination) > 50){
+            if( /*intersects ||  */ us.location.distance(destination) > 40){
                 navigation = new AStarNavigation();
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
@@ -134,7 +134,7 @@ public class MotionController extends ControllerBase {
                 ((FredRobotPort) this.robot.port).propeller(0);
                 ((FredRobotPort) this.robot.port).propeller(0);
 
-            } else if( us.location.distance(destination) > 22 && us.location.distance(destination) < 50){
+            } else if( us.location.distance(destination) > 21 && us.location.distance(destination) < 40){
                     navigation = new AStarNavigation();
                     navigation.setHeading(destination);
                     GUI.gui.searchType.setText("A*");
@@ -147,6 +147,8 @@ public class MotionController extends ControllerBase {
 
                 }
                 else {
+                     System.out.print("Trying to catch ball");
+                    ((FredRobotPort) this.robot.port).propeller(-50);
                     ((FredRobotPort) this.robot.port).propeller(-50);
                     ((FredRobotPort) this.robot.port).propeller(-50);
                     ((FredRobotPort) this.robot.port).propeller(-50);
@@ -212,6 +214,9 @@ public class MotionController extends ControllerBase {
 
     // Rotates the robot towards the goal
     private void rotate(Robot us) {
+
+        System.out.println("I will rotate to goal");
+
         NavigationInterface navigation;
         VectorGeometry destination = null;
         VectorGeometry heading = null;
