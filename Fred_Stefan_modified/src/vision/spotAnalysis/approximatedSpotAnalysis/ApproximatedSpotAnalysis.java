@@ -106,7 +106,23 @@ public class ApproximatedSpotAnalysis extends SpotAnalysisBase implements RawInp
 
 		HashMap<SDPColor, ArrayList<Spot>> spots = new HashMap<SDPColor, ArrayList<Spot>>();
 		for(SDPColor c : SDPColor.values()){
-			spots.put(c, new ArrayList<Spot>());
+			if(c == SDPColor.GREEN_1 || c == SDPColor.GREEN_2){
+				//spots.put(c, new ArrayList<Spot>());
+				spots.put(SDPColor.GREEN, new ArrayList<Spot>());
+				System.out.println("green if");
+			} else if(c == SDPColor.BLUE_1 || c == SDPColor.BLUE_2){
+				spots.put(SDPColor.BLUE, new ArrayList<Spot>());
+				System.out.println("blue if");
+			} else if(c == SDPColor.PINK_1 || c == SDPColor.PINK_2){
+				spots.put(SDPColor.PINK, new ArrayList<Spot>());
+				System.out.println("pink if");
+			} else if(c == SDPColor.YELLOW_1 || c == SDPColor.YELLOW_2){
+				spots.put(SDPColor.YELLOW, new ArrayList<Spot>());
+				System.out.println("yellow if");
+			} else {
+				spots.put(c, new ArrayList<Spot>());
+				System.out.println("else");
+			}
 		}
 		Spot spot;
 		
