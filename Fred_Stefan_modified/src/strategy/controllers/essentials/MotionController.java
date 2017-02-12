@@ -79,16 +79,17 @@ public class MotionController extends ControllerBase {
         if (us == null) return;
 
         // For now haveBall is always 0 and move function calls rotate (if ball is close to the robot), which then calls kick if we are facing the goal (this probably needs calibration)
-        if (haveBall == 0) {
-            move(us);
-        } else if (haveBall == 1) {
-            VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
-            rotate(us, dest, true);
-        } else if (haveBall == 2) {
-            kickOrCatch(us, true);
-        } else {
-            System.out.println("Error in haveball var = " + haveBall);
-        }
+//        if (haveBall == 0) {
+//            move(us);
+//        } else if (haveBall == 1) {
+//            VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
+//            rotate(us, dest, true);
+//        } else if (haveBall == 2) {
+//            kickOrCatch(us, true);
+//        } else {
+//            System.out.println("Error in haveball var = " + haveBall);
+//        }
+        move(us);
     }
 
     private void move(Robot us) {
@@ -125,6 +126,7 @@ public class MotionController extends ControllerBase {
             if ( /*intersects ||  */ us.location.distance(destination) > 55) {
                 StaticVariables.ballkicks = 0;
                 navigation = new AStarNavigation();
+//                navigation = new PotentialFieldNavigation();
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
                 System.out.println("A* Prop down");
@@ -277,8 +279,6 @@ public class MotionController extends ControllerBase {
             try {
 //                Thread.sleep(500);
                 System.out.println("Kicking");
-                ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-                // Will it crash with 300 spin ? Will it be stronger ? You can do it, robot
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
                 for (int i = 0; i < 9; i++) {
                     ((FredRobotPort) this.robot.port).propeller(100);
