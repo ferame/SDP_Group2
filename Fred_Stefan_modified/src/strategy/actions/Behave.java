@@ -57,12 +57,6 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             case KICK:
                 this.enterAction(new OffensiveKick(this.robot), 0, 0);
                 break;
-            case SHUNT:
-                this.enterAction(new ShuntKick(this.robot), 0, 0);
-                break;
-            case SAFE:
-                this.enterAction(new GoToSafeLocation(this.robot), 0, 0);
-                break;
         }
     }
 
@@ -74,28 +68,29 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         } else {
             Robot us = Strategy.world.getRobot(this.robot.robotType);
             if(us == null){
-                System.out.println("I'm lost!!!");
+                System.out.println("Robot is lost.");
 
             } else {
                 VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
-                if(us.location.distance(ourGoal) > ball.location.distance(ourGoal)){
-                    this.nextState = BehaviourEnum.SAFE;
-                } else {
-                    if(Math.abs(ball.location.x) > Constants.PITCH_WIDTH/2 - 20 && Math.abs(ball.location.y) > Constants.PITCH_HEIGHT/2 - 20){
-                        this.nextState = BehaviourEnum.SHUNT;
-                    } else {
-                        boolean canKick = true;
-                        for(Robot r : Strategy.world.getRobots()){
-                            if(r != null && r.type != RobotType.FRIEND_2 && r.velocity.length() < 1) canKick = canKick && r.location.distance(ball.location) > 50;
-                        }
-                        canKick = canKick && !WorldTools.isPointInEnemyDefenceArea(ball.location);
-                        if(canKick && (this.lastState != BehaviourEnum.DEFEND || VectorGeometry.angle(ball.velocity, VectorGeometry.fromTo(ball.location, new VectorGeometry(-Constants.PITCH_WIDTH/2, 0))) > 2)){
-                            this.nextState = BehaviourEnum.KICK;
-                        } else {
-                            this.nextState = BehaviourEnum.DEFEND;
-                        }
-                    }
-                }
+                this.nextState = BehaviourEnum.KICK;
+//                if(us.location.distance(ourGoal) > ball.location.distance(ourGoal)){
+//                    this.nextState = BehaviourEnum.SAFE;
+//                } else {
+//                    if(Math.abs(ball.location.x) > Constants.PITCH_WIDTH/2 - 20 && Math.abs(ball.location.y) > Constants.PITCH_HEIGHT/2 - 20){
+//                        this.nextState = BehaviourEnum.SHUNT;
+//                    } else {
+//                        boolean canKick = true;
+//                        for(Robot r : Strategy.world.getRobots()){
+//                            if(r != null && r.type != RobotType.FRIEND_2 && r.velocity.length() < 1) canKick = canKick && r.location.distance(ball.location) > 50;
+//                        }
+//                        canKick = canKick && !WorldTools.isPointInEnemyDefenceArea(ball.location);
+//                        if(canKick && (this.lastState != BehaviourEnum.DEFEND || VectorGeometry.angle(ball.velocity, VectorGeometry.fromTo(ball.location, new VectorGeometry(-Constants.PITCH_WIDTH/2, 0))) > 2)){
+//                            this.nextState = BehaviourEnum.KICK;
+//                        } else {
+//                            this.nextState = BehaviourEnum.DEFEND;
+//                        }
+//                    }
+//                }
             }
         }
         return this.nextState;

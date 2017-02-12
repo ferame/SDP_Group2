@@ -6,6 +6,7 @@ package strategy.navigation.potentialFieldNavigation;
  * SDP is our world, we decide how to Physics in it. :)
  */
 public enum FieldFormula {
+    JUST_X,
     ONE_OVER_X,
     ONE_OVER_X2,
     MINUS_LN_X,

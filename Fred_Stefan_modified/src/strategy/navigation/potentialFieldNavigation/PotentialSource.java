@@ -45,6 +45,9 @@ public abstract class PotentialSource implements PotentialSourceInterface{
         if(adjustedDistance > xCutoff) return 0;
         double funcRes = 0;
         switch(this.formula){
+            case JUST_X:
+                funcRes = adjustedDistance;
+                break;
             case ONE_OVER_X:
                 funcRes = 1/adjustedDistance;
                 break;
