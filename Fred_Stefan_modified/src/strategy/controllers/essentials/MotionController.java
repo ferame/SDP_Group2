@@ -131,25 +131,22 @@ public class MotionController extends ControllerBase {
 
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
 
-            }
-
-            else if (us.location.distance(destination) > 21 && us.location.distance(destination) < 55) {
-                StaticVariables.ballkicks = 0;
+            } else if (us.location.distance(destination) > 21 && us.location.distance(destination) < 55) {
+//                StaticVariables.ballkicks = 0;
                 navigation = new AStarNavigation();
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
                 System.out.print("Potential Field");
                 System.out.println(us.location.distance(destination));
-                ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-                ((FredRobotPort) this.robot.port).propeller(100);
-                ((FredRobotPort) this.robot.port).propeller(100);
-                ((FredRobotPort) this.robot.port).propeller(100);
-
+                ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+                for (int i = 0; i < 9; i++){
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                }
             } else {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-                ((FredRobotPort) this.robot.port).propeller(-50);
-                ((FredRobotPort) this.robot.port).propeller(-50);
-                ((FredRobotPort) this.robot.port).propeller(-50);
+                for (int i = 0; i < 9; i++) {
+                    ((FredRobotPort) this.robot.port).propeller(-50);
+                }
                 if (StaticVariables.ballkicks == 0) {
                     System.out.println("Rotate to goal");
 
@@ -230,16 +227,17 @@ public class MotionController extends ControllerBase {
 
         navigation.setHeading(rotationDestination);
 
-        if (!kick){
+        if (!kick) {
             ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            ((FredRobotPort) this.robot.port).propeller(100);
-            ((FredRobotPort) this.robot.port).propeller(100);
-            ((FredRobotPort) this.robot.port).propeller(100);
-        } else{
+            for (int i = 0; i < 9; i++) {
+                ((FredRobotPort) this.robot.port).propeller(100);
+            }
+        } else {
             ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            ((FredRobotPort) this.robot.port).propeller(100);
-            ((FredRobotPort) this.robot.port).propeller(100);
-            ((FredRobotPort) this.robot.port).propeller(100);
+            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+            for (int i = 0; i < 9; i++) {
+                ((FredRobotPort) this.robot.port).propeller(-50);
+            }
         }
 
         if (this.heading != null) {
@@ -269,33 +267,36 @@ public class MotionController extends ControllerBase {
     }
 
     // Only the actual kicking happens here. it is called from rotate
-    private void kickOrCatch(Robot us ,Boolean kick) {
-        if (kick){
+    private void kickOrCatch(Robot us, Boolean kick) {
+        if (kick) {
             ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            ((FredRobotPort) this.robot.port).propeller(-50);
-            ((FredRobotPort) this.robot.port).propeller(-50);
-            ((FredRobotPort) this.robot.port).propeller(-50);
+            for (int i = 0; i < 9; i++) {
+                ((FredRobotPort) this.robot.port).propeller(-50);
+            }
             StaticVariables.ballkicks++;
             try {
 //                Thread.sleep(500);
                 System.out.println("Kicking");
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
                 // Will it crash with 300 spin ? Will it be stronger ? You can do it, robot
-                ((FredRobotPort) this.robot.port).propeller(300);
-                ((FredRobotPort) this.robot.port).propeller(300);
-                ((FredRobotPort) this.robot.port).propeller(300);
+                ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+                for (int i = 0; i < 9; i++) {
+                    ((FredRobotPort) this.robot.port).propeller(100);
+                }
                 Thread.sleep(500);
-                ((FredRobotPort) this.robot.port).propeller(0);
-                ((FredRobotPort) this.robot.port).propeller(0);
-                ((FredRobotPort) this.robot.port).propeller(0);
+                for (int i = 0; i < 9; i++) {
+                    ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
+                }
+
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-        }}
-        else {
+            }
+        } else {
+            System.out.println("Catch");
             ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            ((FredRobotPort) this.robot.port).propeller(-50);
-            ((FredRobotPort) this.robot.port).propeller(-50);
-            ((FredRobotPort) this.robot.port).propeller(-50);
+            for (int i = 0; i < 9; i++) {
+                ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
+            }
             StaticVariables.ballkicks = 0;
         }
     }
