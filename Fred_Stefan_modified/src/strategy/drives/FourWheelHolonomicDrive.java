@@ -50,7 +50,7 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         right = right*normalizer + rotation * this.MAX_ROTATION;*/
 
 
-        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, -back, -left, right);
+        ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, back, left, -right);
 
     }
 }

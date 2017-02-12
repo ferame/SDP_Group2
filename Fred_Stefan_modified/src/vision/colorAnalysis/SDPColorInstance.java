@@ -38,9 +38,9 @@ public class SDPColorInstance extends JFrame implements ActionListener, ChangeLi
 		
 	private float maxHue        = 0;
 	private float minHue        = 0;
-	private float maxSaturation = 1;
+	private float maxSaturation = 2;
 	private float minSaturation = 1;
-	private float maxBrightness = 1;
+	private float maxBrightness = 2;
 	private float minBrightness = 1;
 
 	private JSlider minHueSlider;

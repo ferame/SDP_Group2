@@ -34,16 +34,47 @@ public class NewRobotAnalysis extends RobotAnalysisBase {
         ArrayList<Spot> spotList;
         ArrayList<RobotPlate> plates = new ArrayList<RobotPlate>();
 
+        /*
+        ArrayList<Spot> greenSpots  = new ArrayList<Spot>();
+        greenSpots.addAll(spots.get(SDPColor.GREEN));
+        greenSpots.addAll(spots.get(SDPColor.GREEN_1));
+        greenSpots.addAll(spots.get(SDPColor.GREEN_2));
+
+        ArrayList<Spot> pinkSpots  = new ArrayList<Spot>();
+        pinkSpots.addAll(spots.get(SDPColor.PINK));
+        pinkSpots.addAll(spots.get(SDPColor.PINK_1));
+        pinkSpots.addAll(spots.get(SDPColor.PINK_2));
+
+        ArrayList<Spot> yellowSpots  = new ArrayList<Spot>();
+        yellowSpots.addAll(spots.get(SDPColor.YELLOW));
+        yellowSpots.addAll(spots.get(SDPColor.YELLOW_1));
+        yellowSpots.addAll(spots.get(SDPColor.YELLOW_2));
+
+        ArrayList<Spot> blueSpots  = new ArrayList<Spot>();
+        blueSpots.addAll(spots.get(SDPColor.BLUE));
+        blueSpots.addAll(spots.get(SDPColor.BLUE_1));
+        blueSpots.addAll(spots.get(SDPColor.BLUE_2));
+        */
+
         PatternMatcher.patternMatch(spots.get(SDPColor.GREEN), plates);
         PatternMatcher.patternMatch(spots.get(SDPColor.PINK), plates);
 
+        //PatternMatcher.patternMatch(greenSpots, plates);
+        //PatternMatcher.patternMatch(pinkSpots, plates);
+
         PatternMatcher.singularValidate(spots.get(SDPColor.GREEN), plates);
         PatternMatcher.singularValidate(spots.get(SDPColor.PINK), plates);
+
+        //PatternMatcher.singularValidate(greenSpots, plates);
+        //PatternMatcher.singularValidate(pinkSpots, plates);
 
         PatternMatcher.removeInvalid(plates);
 
         PatternMatcher.teamAnalysis(plates, spots.get(SDPColor.YELLOW));
         PatternMatcher.teamAnalysis(plates, spots.get(SDPColor.BLUE));
+
+        //PatternMatcher.teamAnalysis(plates, yellowSpots);
+        //PatternMatcher.teamAnalysis(plates, blueSpots);
 
         DynamicWorld world = new DynamicWorld(time);
         Robot r;
