@@ -128,7 +128,8 @@ public class MotionController extends ControllerBase {
                 // Robot is getting close to the ball
                 if( us.location.distance(destination) > 21 && us.location.distance(destination) < 50){
                     haveBall = 0;
-                    navigation = new AStarNavigation();
+//                    navigation = new AStarNavigation();
+                    navigation = new PotentialFieldNavigation();
                     ((Fred)this.robot).MOTION_CONTROLLER.setHeading(new BallPoint());
                     ((Fred)this.robot).MOTION_CONTROLLER.setDestination(new BallPoint());
                     GUI.gui.searchType.setText("A*");
