@@ -373,4 +373,9 @@ public class VectorGeometry {
     public static VectorGeometry fromTo(double x, double y, int x1, int y1) {
         return fromTo(new VectorGeometry(x, y), new VectorGeometry(x1, y1));
     }
+
+    public static double radToDeg (double r) {
+        return r*180.0/Math.PI;
+    }
+
 }

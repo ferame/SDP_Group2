@@ -26,5 +26,6 @@ public interface DriveInterface {
      */
     void move(RobotPort port, DirectedPoint location, VectorGeometry force, double rotation, double factor);
     void rotate(RobotPort port, double force);
+    void moveForward(RobotPort port);
 
 }
