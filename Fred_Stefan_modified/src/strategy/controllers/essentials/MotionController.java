@@ -133,7 +133,7 @@ public class MotionController extends ControllerBase {
 
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
 
-            } else if (us.location.distance(destination) > 21 && us.location.distance(destination) < 55) {
+            } else if (us.location.distance(destination) > 22 - StaticVariables.ballkicks && us.location.distance(destination) < 55) {
 //                StaticVariables.ballkicks = 0;
                 navigation = new AStarNavigation();
                 navigation.setHeading(destination);
@@ -146,16 +146,20 @@ public class MotionController extends ControllerBase {
                 }
             } else {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-                for (int i = 0; i < 9; i++) {
-                    ((FredRobotPort) this.robot.port).propeller(-50);
-                }
+
                 if (StaticVariables.ballkicks == 0) {
+                    for (int i = 0; i < 9; i++) {
+                        ((FredRobotPort) this.robot.port).propeller(-50);
+                    }
                     System.out.println("Rotate to goal");
 
                     VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
                     rotate(us, dest, true);
                     return;
                 } else {
+                    for (int i = 0; i < 9; i++) {
+                        ((FredRobotPort) this.robot.port).propeller(100);
+                    }
                     System.out.println("Rotate to ball");
                     rotate(us, destination, false);
                     return;
@@ -229,18 +233,18 @@ public class MotionController extends ControllerBase {
 
         navigation.setHeading(rotationDestination);
 
-        if (!kick) {
-            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            for (int i = 0; i < 9; i++) {
-                ((FredRobotPort) this.robot.port).propeller(100);
-            }
-        } else {
-            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            for (int i = 0; i < 9; i++) {
-                ((FredRobotPort) this.robot.port).propeller(-50);
-            }
-        }
+//        if (!kick) {
+//            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+//            for (int i = 0; i < 9; i++) {
+//                ((FredRobotPort) this.robot.port).propeller(100);
+//            }
+//        } else {
+//            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+//            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+//            for (int i = 0; i < 9; i++) {
+//                ((FredRobotPort) this.robot.port).propeller(-50);
+//            }
+//        }
 
         if (this.heading != null) {
             this.heading.recalculate();
@@ -257,7 +261,8 @@ public class MotionController extends ControllerBase {
 //        rotation = StaticVariables.recentRotations[0] + StaticVariables.recentRotations[1] + StaticVariables.recentRotations[2] / 3;
         System.out.println(rotation);
         //When robot is ~ facing the enemy goal, kick
-        if (rotation < 0.3 && rotation > -0.3 /* && StaticVariables.recentRotations[1] != 1*/) {
+        if (rotation < 0.4 && rotation > -0.4 /* && StaticVariables.recentRotations[1] != 1*/) {
+            System.out.print(rotation);
             this.robot.port.stop();
             kickOrCatch(us, kick);
         } else {
