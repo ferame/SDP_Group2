@@ -121,7 +121,7 @@ public class MotionController extends ControllerBase {
                 //System.out.println("Check potential obstacle");
 
             }
-            System.out.println(us.location.distance(destination));
+//            System.out.println(us.location.distance(destination));
             // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
             if ( /*intersects ||  */ us.location.distance(destination) > 55) {
                 StaticVariables.ballkicks = 0;
@@ -139,7 +139,6 @@ public class MotionController extends ControllerBase {
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
                 System.out.print("Potential Field");
-                System.out.println(us.location.distance(destination));
                 ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
                 for (int i = 0; i < 9; i++){
                     ((FredRobotPort) this.robot.port).propeller(100);
@@ -259,10 +258,10 @@ public class MotionController extends ControllerBase {
 //        StaticVariables.recentRotations[0] = StaticVariables.recentRotations[0] + 1 % 3;
 //
 //        rotation = StaticVariables.recentRotations[0] + StaticVariables.recentRotations[1] + StaticVariables.recentRotations[2] / 3;
-        System.out.println(rotation);
+//        System.out.println(rotation);
         //When robot is ~ facing the enemy goal, kick
         if (rotation < 0.4 && rotation > -0.4 /* && StaticVariables.recentRotations[1] != 1*/) {
-            System.out.print(rotation);
+            System.out.print("Kick or catch rotation " + rotation + " ");
             this.robot.port.stop();
             kickOrCatch(us, kick);
         } else {
@@ -281,13 +280,14 @@ public class MotionController extends ControllerBase {
                 ((FredRobotPort) this.robot.port).propeller(-50);
             }
             StaticVariables.ballkicks++;
+            System.out.println("Kicking");
+            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+            for (int i = 0; i < 9; i++) {
+                ((FredRobotPort) this.robot.port).propeller(100);
+            }
             try {
 //                Thread.sleep(500);
-                System.out.println("Kicking");
-                ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-                for (int i = 0; i < 9; i++) {
-                    ((FredRobotPort) this.robot.port).propeller(100);
-                }
+
                 Thread.sleep(500);
                 for (int i = 0; i < 9; i++) {
                     ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
@@ -301,6 +301,11 @@ public class MotionController extends ControllerBase {
             ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
             for (int i = 0; i < 9; i++) {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
+            }
+            try{
+                Thread.sleep(500);
+            }catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
             StaticVariables.ballkicks = 0;
         }
