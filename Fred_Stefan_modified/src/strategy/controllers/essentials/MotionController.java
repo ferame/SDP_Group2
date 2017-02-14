@@ -122,7 +122,8 @@ public class MotionController extends ControllerBase {
 //            System.out.println(us.location.distance(destination));
             // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
             if ( /*intersects ||  */ us.location.distance(destination) > 55) {
-                StaticVariables.ballkicks = 0;
+                //StaticVariables.ballkicks = 0;
+                StaticVariables.haveBall = false;
                 navigation = new AStarNavigation();
 //                navigation = new PotentialFieldNavigation();
                 navigation.setHeading(destination);
@@ -132,8 +133,9 @@ public class MotionController extends ControllerBase {
                     ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
                 }
 
-            } else if (us.location.distance(destination) > 21 /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
+            } else if (us.location.distance(destination) > 22 /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
                 navigation = new AStarNavigation();
+                StaticVariables.haveBall = false;
                 //navigation = new PotentialFieldNavigation();
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
@@ -151,7 +153,7 @@ public class MotionController extends ControllerBase {
                     /*for (int i = 0; i < 5; i++) {
                         ((FredRobotPort) this.robot.port).propeller(-100);
                     }*/
-                    System.out.println("Rotate to goal");
+//                    System.out.println("Rotate to goal");
 
                     VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
                     rotate(us, dest, true);
@@ -160,7 +162,7 @@ public class MotionController extends ControllerBase {
                     for (int i = 0; i < 5; i++) {
                         ((FredRobotPort) this.robot.port).propeller(100);
                     }
-                    System.out.println("Rotate to ball");
+//                    System.out.println("Rotate to ball");
                     rotate(us, destination, false);
                     return;
                 }
@@ -259,16 +261,22 @@ public class MotionController extends ControllerBase {
 //        rotation = StaticVariables.recentRotations[0] + StaticVariables.recentRotations[1] + StaticVariables.recentRotations[2] / 3;
 //        System.out.println(rotation);
         //When robot is ~ facing the enemy goal, kick
-        System.out.println("Rotation " + rotation + " ");
-        if (rotation < 20 && rotation > -20 && kick) {
+//        System.out.println("Rotation " + rotation + " ");
+        if (rotation < 30 && rotation > -30 && kick) {
             this.robot.port.stop();
             kick(us);
-        } else if (rotation < 20 && rotation > -20 && !kick) {
-            this.robot.drive.moveForward(this.robot.port);
-            catchBall(us);
+        } else if (rotation < 40 && rotation > -40 && !kick) {
+            try {
+                this.robot.drive.moveForward(this.robot.port);
+                Thread.sleep(300);
+                catchBall(us);
+            }
+            catch (InterruptedException ex){
+                Thread.currentThread().interrupt();
+            }
         } else {
-            this.robot.drive.rotate(this.robot.port, factor);
-
+            if (rotation<0) this.robot.drive.rotate(this.robot.port, -factor);
+            else this.robot.drive.rotate(this.robot.port, factor);
         }
 
 
@@ -280,7 +288,7 @@ public class MotionController extends ControllerBase {
 //            for (int i = 0; i < 5; i++) {
 //                ((FredRobotPort) this.robot.port).propeller(-50);
 //            }
-        StaticVariables.ballkicks++;
+        //StaticVariables.ballkicks++;
         StaticVariables.haveBall = false;
         System.out.println("Kick");
         for (int i = 0; i < 5; i++) {
@@ -309,7 +317,7 @@ public class MotionController extends ControllerBase {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-        StaticVariables.ballkicks = 0;
+//        StaticVariables.ballkicks = 0;
         StaticVariables.haveBall = true;
     }
 }

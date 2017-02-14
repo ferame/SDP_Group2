@@ -60,7 +60,7 @@ public class Demo2 extends ActionBase {
 
         System.out.println("Rotation " + rotation + " ");
 
-        if (rotation < 20 && rotation > -20) {
+        if (rotation < 30 && rotation > -30) {
             this.robot.port.stop();
             this.robot.port.stop();
             this.robot.port.stop();
