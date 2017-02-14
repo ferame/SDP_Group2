@@ -137,14 +137,14 @@ public class RecursiveSpotAnalysis extends SpotAnalysisBase{
                     this.processPixel(x, y, colorInstance, average, 200);
                     if(average.getCount() > 5){
                         SDPColor colorNew;
-                        if(color == SDPColor.GREEN_1 || color == SDPColor.GREEN_2){
+                        if(color == SDPColor.GREEN_1){
                             //spots.put(c, new ArrayList<Spot>());
                             colorNew = SDPColor.GREEN;
-                        } else if(color == SDPColor.BLUE_1 || color == SDPColor.BLUE_2){
+                        } else if(color == SDPColor.BLUE_1){
                             colorNew = SDPColor.BLUE;
-                        } else if(color == SDPColor.PINK_1 || color == SDPColor.PINK_2){
+                        } else if(color == SDPColor.PINK_1){
                             colorNew = SDPColor.PINK;
-                        } else if(color == SDPColor.YELLOW_1 || color == SDPColor.YELLOW_2){
+                        } else if(color == SDPColor.YELLOW_1){
                             colorNew = SDPColor.YELLOW;
                         } else{
                             colorNew = color;
@@ -154,14 +154,14 @@ public class RecursiveSpotAnalysis extends SpotAnalysisBase{
                     average.reset();
                 }
             }
-            if(color == SDPColor.GREEN_1 || color == SDPColor.GREEN_2){
+            if(color == SDPColor.GREEN_1){
                 //spots.put(c, new ArrayList<Spot>());
                 Collections.sort(spots.get(SDPColor.GREEN));
-            } else if(color == SDPColor.BLUE_1 || color == SDPColor.BLUE_2){
+            } else if(color == SDPColor.BLUE_1){
                 Collections.sort(spots.get(SDPColor.BLUE));
-            } else if(color == SDPColor.PINK_1 || color == SDPColor.PINK_2){
+            } else if(color == SDPColor.PINK_1){
                 Collections.sort(spots.get(SDPColor.PINK));
-            } else if(color == SDPColor.YELLOW_1 || color == SDPColor.YELLOW_2){
+            } else if(color == SDPColor.YELLOW_1){
                 Collections.sort(spots.get(SDPColor.YELLOW));
             } else{
                 Collections.sort(spots.get(color));
