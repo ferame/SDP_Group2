@@ -39,7 +39,7 @@ public class FourWheelHolonomicDrive implements DriveInterface{
 
     }
 
-    //TODO rotate slower when closser to the goal
+    //TODO rotate slower when closer to the goal
     public void rotate(RobotPort port, double force){
         assert(port instanceof FourWheelHolonomicRobotPort);
 
