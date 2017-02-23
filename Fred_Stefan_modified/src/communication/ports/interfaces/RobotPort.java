@@ -13,20 +13,25 @@ import communication.PortListener;
 public class RobotPort implements PortListener {
 
     public final SDPPort sdpPort = new SDPPort();
-
+    private String input = null;
 
     public RobotPort(String expectedPingResponse){
-        (new Thread() {
+        /*(new Thread() {
             public void run() {
                 sdpPort.connect(null, expectedPingResponse);
             }
-        }).start();
+        }).start();*/
+        sdpPort.connect(null, expectedPingResponse);
         sdpPort.addCommunicationListener(this);
     }
 
     @Override
     public void receivedStringHandler(String string) {
+        this.input = string;
+    }
 
+    public String getInput() {
+        return input;
     }
 
     public void ping() {
@@ -40,4 +45,5 @@ public class RobotPort implements PortListener {
     public void halt() {
         sdpPort.commandSender("h");
     }
+
 }

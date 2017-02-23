@@ -78,7 +78,6 @@ public class SDPPort extends JFrame implements PortListener, ActionListener{
 //        this.setVisible(true);
     }
 
-
     /**
      * This method scans all the available ports for the robot. It sends "ping" to every port
      * and if a port returns the expectedResponse, it saves that port as the robot's port.

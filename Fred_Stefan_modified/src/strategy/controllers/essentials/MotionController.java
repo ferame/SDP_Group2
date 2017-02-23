@@ -71,6 +71,7 @@ public class MotionController extends ControllerBase {
     }
 
     public void perform() {
+
         if (this.mode == MotionMode.OFF) return;
 
         Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
@@ -97,6 +98,14 @@ public class MotionController extends ControllerBase {
 
         VectorGeometry heading = null;
         VectorGeometry destination = null;
+
+        double compassReading = 0.0;
+
+        String input = this.robot.port.getInput();
+        if (input.contains("Degrees")) {
+            compassReading = Double.parseDouble(input.substring(0,6));
+        }
+        System.out.println(compassReading + "");
 
         if (this.destination != null) {
             this.destination.recalculate();
@@ -133,9 +142,9 @@ public class MotionController extends ControllerBase {
                     ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
                 }
 
-            } else if (us.location.distance(destination) > 22 /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
+            } else if (us.location.distance(destination) > 21 /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
                 navigation = new AStarNavigation();
-                StaticVariables.haveBall = false;
+                //StaticVariables.haveBall = false;
                 //navigation = new PotentialFieldNavigation();
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
@@ -146,13 +155,18 @@ public class MotionController extends ControllerBase {
                         ((FredRobotPort) this.robot.port).propeller(100);
                     }
                 }
+                else {
+                    for (int i = 0; i < 5; i++) {
+                        ((FredRobotPort) this.robot.port).propeller(-100);
+                    }
+                }
             } else {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
 
                 if (StaticVariables.haveBall/* && StaticVariables.ballkicks == 0*/) {
-                    /*for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 5; i++) {
                         ((FredRobotPort) this.robot.port).propeller(-100);
-                    }*/
+                    }
 //                    System.out.println("Rotate to goal");
 
                     VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
@@ -262,19 +276,21 @@ public class MotionController extends ControllerBase {
 //        System.out.println(rotation);
         //When robot is ~ facing the enemy goal, kick
 //        System.out.println("Rotation " + rotation + " ");
-        if (rotation < 30 && rotation > -30 && kick) {
-            this.robot.port.stop();
+        if (rotation < 40 && rotation > -40 && kick) {
+            //this.robot.port.stop();
             kick(us);
         } else if (rotation < 40 && rotation > -40 && !kick) {
-            try {
-                this.robot.drive.moveForward(this.robot.port);
-                Thread.sleep(300);
+            /*try {
+                //this.robot.drive.moveForward(this.robot.port);
+                //Thread.sleep(200);
                 catchBall(us);
             }
             catch (InterruptedException ex){
                 Thread.currentThread().interrupt();
-            }
+            }*/
+            catchBall(us);
         } else {
+            if (kick) System.out.println("Rotating towards goal");
             if (rotation<0) this.robot.drive.rotate(this.robot.port, -factor);
             else this.robot.drive.rotate(this.robot.port, factor);
         }
