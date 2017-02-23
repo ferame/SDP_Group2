@@ -1,10 +1,6 @@
 #include "SerialCommand.h"
 #include "SDPArduino.h"
-<<<<<<< HEAD
 #include "HMC5883L.h"
-=======
-#include "Accelerometer_Compass_LSM303D.h"
->>>>>>> a3675865ff209df6fefbbcdb44e2a571b11c7edf
 #include <Wire.h>
 #include "SPI.h"
 #include <Arduino.h>
@@ -14,16 +10,11 @@
 #define LEFT 0
 #define KICKERS 1
 
-<<<<<<< HEAD
 HMC5883L compass;
 int error = 0;
 
 // int mag[3];  // raw magnetometer values stored here
 // float heading;
-=======
-int mag[3];  // raw magnetometer values stored here
-float heading;
->>>>>>> a3675865ff209df6fefbbcdb44e2a571b11c7edf
 
 int run = 0;
 
@@ -35,7 +26,6 @@ void loop(){
   sCmd.readSerial();
   
   //For compass
-<<<<<<< HEAD
   
     // Retrive the raw values from the compass (not scaled).
     MagnetometerRaw raw = compass.readRawAxis();
@@ -75,15 +65,6 @@ void loop(){
     // it run at its natural speed.
     delay(66);//of course it can be delayed longer
     
-=======
-  Serial.println("\r\n**************");
-  while(!Lsm303d.isMagReady());// wait for the magnetometer readings to be ready
-  Lsm303d.getMag(mag);  // get the magnetometer values, store them in mag
-  heading = Lsm303d.getHeading(mag);
-	
-  printCompassValues();
-  delay(200);
->>>>>>> a3675865ff209df6fefbbcdb44e2a571b11c7edf
   //End of compass
 }
 
@@ -142,7 +123,6 @@ void completeHalt(){
   motorAllStop();
 }
 
-<<<<<<< HEAD
 void printCompassValues(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float headingDegrees)
 {
    Serial.print("Raw:\t");
@@ -165,14 +145,6 @@ void printCompassValues(MagnetometerRaw raw, MagnetometerScaled scaled, float he
 //   Serial.print(" Radians   \t");
    Serial.print(headingDegrees);
    Serial.println(" Degrees   \t");
-=======
-void printCompassValues()
-{
-	/* print both the level, and tilt-compensated headings below to compare */
-        Serial.println("The clockwise angle between the magnetic north and x-axis: ");
-	Serial.print(heading, 3); // this only works if the sensor is level
-	Serial.println(" degrees");
->>>>>>> a3675865ff209df6fefbbcdb44e2a571b11c7edf
 }
 
 void setup(){
@@ -182,7 +154,6 @@ void setup(){
   sCmd.addCommand("r", rationalMotors); 
   sCmd.addCommand("ping", pingMethod); 
   sCmd.addCommand("kick", kicker);
-<<<<<<< HEAD
    
   Wire.begin();
   //For compass
@@ -200,23 +171,6 @@ void setup(){
   error = compass.setMeasurementMode(MEASUREMENT_CONTINUOUS); // Set the measurement mode to Continuous
   if(error != 0) // If there is an error, print it out.
     Serial.println(compass.getErrorText(error));
-=======
- 
-  //For compass
-  char rtn = 0;
-  Serial.begin(9600);
-  Serial.println("\r\npower on");
-  rtn = Lsm303d.initI2C();
-  if(rtn != 0)  // Initialize the LSM303, using a SCALE full-scale range
-        {
-		Serial.println("\r\nLSM303D is not found");
-		while(1);
-	}
-	else
-	{
-		Serial.println("\r\nLSM303D is found");
-	}
->>>>>>> a3675865ff209df6fefbbcdb44e2a571b11c7edf
   //End of compass
   
   SDPsetup();
