@@ -20,8 +20,11 @@ public class PatternMatcher {
             for(int j = i + 1; j < spots.size(); j++){
                 for(int k = j + 1; k < spots.size(); k++){
                     if( VectorGeometry.distance(spots.get(i), spots.get(j)) < 15 &&
+                        VectorGeometry.distance(spots.get(i), spots.get(j)) > 5 &&
                         VectorGeometry.distance(spots.get(i), spots.get(k)) < 15 &&
-                        VectorGeometry.distance(spots.get(k), spots.get(j)) < 15){
+                        VectorGeometry.distance(spots.get(i), spots.get(k)) > 5 &&
+                        VectorGeometry.distance(spots.get(k), spots.get(j)) < 15 &&
+                        VectorGeometry.distance(spots.get(k), spots.get(j)) > 5){
                         plates.add(new RobotPlate(spots.get(i), spots.get(j), spots.get(k)));
                     }
                 }

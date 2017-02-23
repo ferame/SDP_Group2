@@ -13,6 +13,8 @@ import vision.tools.VectorGeometry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.bytedeco.javacpp.presets.*;
+
 
 /**
  * Created by Simon Rovder
@@ -56,6 +58,9 @@ public class NewRobotAnalysis extends RobotAnalysisBase {
         blueSpots.addAll(spots.get(SDPColor.BLUE_2));
         */
 
+        removeDuplicateColours(spots.get(SDPColor.GREEN));
+        removeDuplicateColours(spots.get(SDPColor.PINK));
+
         PatternMatcher.patternMatch(spots.get(SDPColor.GREEN), plates);
         PatternMatcher.patternMatch(spots.get(SDPColor.PINK), plates);
 
@@ -72,6 +77,8 @@ public class NewRobotAnalysis extends RobotAnalysisBase {
 
         PatternMatcher.teamAnalysis(plates, spots.get(SDPColor.YELLOW));
         PatternMatcher.teamAnalysis(plates, spots.get(SDPColor.BLUE));
+
+
 
         //PatternMatcher.teamAnalysis(plates, yellowSpots);
         //PatternMatcher.teamAnalysis(plates, blueSpots);
@@ -191,5 +198,22 @@ public class NewRobotAnalysis extends RobotAnalysisBase {
             }
         }
         this.informListeners(world);
+    }
+
+    private void removeDuplicateColours(ArrayList<Spot> spots) {
+        for (int i = 0; i < spots.size(); i++) {
+            for (int j = i + 1; j < spots.size(); j++) {
+                if (VectorGeometry.distance(spots.get(i), spots.get(j)) <= 4) {
+                    if (Math.abs(spots.get(i).magnitude - 80) > Math.abs(spots.get(j).magnitude - 80)){
+                        Spot buff = spots.get(j);
+                        spots.set(j, spots.get(i));
+                        spots.set(i, buff);
+                    }
+                    spots.remove(j);
+                }
+            }
+
+        }
+
     }
 }
