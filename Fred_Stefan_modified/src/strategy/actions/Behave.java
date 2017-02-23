@@ -88,7 +88,6 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
                         for(Robot r : Strategy.world.getRobots()){
                             if(r != null && r.type != RobotType.FRIEND_2 && r.velocity.length() < 1) canKick = canKick && r.location.distance(ball.location) > 50;
                         }
-                        canKick = canKick && !WorldTools.isPointInEnemyDefenceArea(ball.location);
                         if(canKick && (this.lastState != BehaviourEnum.DEFEND || VectorGeometry.angle(ball.velocity, VectorGeometry.fromTo(ball.location, new VectorGeometry(-Constants.PITCH_WIDTH/2, 0))) > 2)){
                             this.nextState = BehaviourEnum.KICK;
                         } else {
