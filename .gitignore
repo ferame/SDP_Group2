@@ -29,6 +29,7 @@ Fred_Stefan_modified/.idea/workspace.xml
 ## Plugin-specific files:
 
 # IntelliJ
+out/
 /out/
 
 # mpeltonen/sbt-idea plugin
@@ -36,6 +37,10 @@ Fred_Stefan_modified/.idea/workspace.xml
 
 # JIRA plugin
 atlassian-ide-plugin.xml
+
+# Ignoring old Astas' project folder
+Fred_Asta_modified/
+/Fred_Asta_modified/
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
