@@ -148,6 +148,8 @@ public class MotionController extends ControllerBase {
                 }
             } else {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+                destination = determineDestination(us, destination);
+                rotate(us, destination, StaticVariables.haveBall);
 
                 if (StaticVariables.haveBall/* && StaticVariables.ballkicks == 0*/) {
                     /*for (int i = 0; i < 5; i++) {
@@ -270,12 +272,11 @@ public class MotionController extends ControllerBase {
                 this.robot.drive.moveForward(this.robot.port);
                 Thread.sleep(300);
                 catchBall(us);
-            }
-            catch (InterruptedException ex){
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
         } else {
-            if (rotation<0) this.robot.drive.rotate(this.robot.port, -factor);
+            if (rotation < 0) this.robot.drive.rotate(this.robot.port, -factor);
             else this.robot.drive.rotate(this.robot.port, factor);
         }
 
@@ -319,5 +320,22 @@ public class MotionController extends ControllerBase {
         }
 //        StaticVariables.ballkicks = 0;
         StaticVariables.haveBall = true;
+    }
+
+    private VectorGeometry determineDestination(Robot us, VectorGeometry oldDestination) {
+
+        VectorGeometry newDestination = null;
+        VectorGeometry enemyGoal = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
+        if (!StaticVariables.haveBall) {
+            return oldDestination;
+        } else {
+            if (us.location.distance(enemyGoal) < 75) {
+                newDestination = enemyGoal;
+                //TODO also check if there are any obstacles on the way to goal
+            } else {
+                newDestination = Strategy.world.getRobot(RobotType.FRIEND_1).location;
+            }
+            return newDestination;
+        }
     }
 }
