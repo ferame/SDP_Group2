@@ -324,18 +324,35 @@ public class MotionController extends ControllerBase {
 
     private VectorGeometry determineDestination(Robot us, VectorGeometry oldDestination) {
 
-        VectorGeometry newDestination = null;
-        VectorGeometry enemyGoal = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
         if (!StaticVariables.haveBall) {
             return oldDestination;
-        } else {
-            if (us.location.distance(enemyGoal) < 75) {
-                newDestination = enemyGoal;
-                //TODO also check if there are any obstacles on the way to goal
-            } else {
-                newDestination = Strategy.world.getRobot(RobotType.FRIEND_1).location;
-            }
-            return newDestination;
         }
+
+        VectorGeometry enemyGoal = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
+        // This may break if we can't find the other friendly robot
+        VectorGeometry alliedRobot = Strategy.world.getRobot(RobotType.FRIEND_1).location;
+        boolean canPassToGoal = true;
+        boolean canPassToAlly = true;
+
+        // Make Sure this does not cause infinite loop
+        for (Obstacle o : this.obstacles) {
+            canPassToGoal = canPassToGoal && !o.intersects(us.location, enemyGoal);
+            //System.out.println("Check Obstacle");
+        }
+        for (Obstacle o : this.obstacles) {
+            canPassToAlly = canPassToAlly && !o.intersects(us.location, alliedRobot);
+            //System.out.println("Check Obstacle");
+        }
+
+        VectorGeometry newDestination = null;
+        if (us.location.distance(enemyGoal) < 75 && canPassToGoal) {
+            newDestination = enemyGoal;
+        } else if (canPassToAlly) {
+            newDestination = alliedRobot;
+        } else {
+            newDestination = enemyGoal;
+        }
+        return newDestination;
+
     }
 }
