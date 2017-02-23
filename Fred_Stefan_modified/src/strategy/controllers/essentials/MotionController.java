@@ -1,5 +1,6 @@
 package strategy.controllers.essentials;
 
+import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
 import communication.ports.robotPorts.FredRobotPort;
 import strategy.StaticVariables;
 import strategy.Strategy;
@@ -88,10 +89,12 @@ public class MotionController extends ControllerBase {
 //        } else {
 //            System.out.println("Error in haveball var = " + haveBall);
 //        }
-        move(us);
+        Boolean strategy = false;
+        if (strategy) attack(us);
+        else defend(us);
     }
 
-    private void move(Robot us) {
+    private void attack(Robot us) {
 
 
         NavigationInterface navigation;
@@ -101,11 +104,11 @@ public class MotionController extends ControllerBase {
 
         double compassReading = 0.0;
 
-        String input = this.robot.port.getInput();
+        /*String input = this.robot.port.getInput();
         if (input.contains("Degrees")) {
             compassReading = Double.parseDouble(input.substring(0,6));
         }
-        System.out.println(compassReading + "");
+        System.out.println(compassReading + "");*/
 
         if (this.destination != null) {
             this.destination.recalculate();
@@ -370,4 +373,53 @@ public class MotionController extends ControllerBase {
         return newDestination;
 
     }
+
+    private void defend (Robot us) {
+
+        if (this.destination == null) return;
+
+        VectorGeometry ourRobot = us.location;
+        System.out.println("ourRobot - " + ourRobot.toString());
+        VectorGeometry ball = Strategy.world.getBall().location;
+        System.out.println("ball - " + ball.toString());
+        VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH / 2, 0);
+        System.out.println("ourGoal - " + ourGoal.toString());
+        VectorGeometry robotToBall = ball.clone();
+        robotToBall.minus(ourRobot);
+        System.out.println("robotToBall - " + robotToBall.toString());
+        VectorGeometry ballToGoal = ourGoal.clone();
+        ourGoal.minus(ball);
+        System.out.println("ballToGoal - " + ballToGoal.toString());
+        VectorGeometry negatedRobotToBall = robotToBall.clone();
+        negatedRobotToBall.negate();
+        double scalarProjection = VectorGeometry.dotProduct(negatedRobotToBall,ballToGoal)/ballToGoal.length();
+        VectorGeometry projection = ballToGoal.multiply(scalarProjection/ballToGoal.length());
+        System.out.println("projection - " + projection.toString());
+        VectorGeometry closestDefencePoint = robotToBall.plus(projection);
+        System.out.println("closestDefence - " + closestDefencePoint.toString());
+
+        NavigationInterface navigation = new AStarNavigation();
+        navigation.setDestination(closestDefencePoint);
+        navigation.setHeading(ball);
+
+        VectorGeometry force = navigation.getForce();
+        if (force == null) {
+            this.robot.port.stop();
+            System.out.println("Force is null");
+            return;
+        }
+
+        VectorGeometry robotHeading = VectorGeometry.fromAngular(us.location.direction, 10, null);
+        VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, closestDefencePoint);
+        double rotation = VectorGeometry.signedAngle(robotToPoint, robotHeading);
+
+        double factor = 1;
+
+        if (us.location.distance(closestDefencePoint) > 5) {
+            System.out.println("Going to defence point");
+            this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
+        }
+
+    }
+
 }

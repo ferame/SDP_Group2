@@ -36,6 +36,12 @@ public class VectorGeometry {
         return v;
     }
 
+    public VectorGeometry negate() {
+        this.x = -this.x;
+        this.y = -this.y;
+        return this;
+    }
+
     public VectorGeometry plus(double x, double y){
         this.x = this.x + x;
         this.y = this.y + y;
