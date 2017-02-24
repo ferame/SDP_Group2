@@ -13,8 +13,8 @@
 HMC5883L compass;
 int error = 0;
 
-// int mag[3];  // raw magnetometer values stored here
-// float heading;
+const int  digitalPIN = 3;                 // sets pin 3 as digital pin
+const int  analogPIN = A3;                 // sets pin A3 as analog pin
 
 int run = 0;
 
@@ -57,15 +57,20 @@ void loop(){
     float headingDegrees = heading * 180/M_PI; 
   
     // Output the data via the serial port.
-    printCompassValues(raw, scaled, heading, headingDegrees);
+    printCompassValues(headingDegrees);
   
     // Normally we would delay the application by 66ms to allow the loop
     // to run at 15Hz (default bandwidth for the HMC5883L).
     // However since we have a long serial out (104ms at 9600) we will let
-    // it run at its natural speed.
-    delay(66);//of course it can be delayed longer
-    
+    // it run at its natural speed.    
   //End of compass
+  
+  //For IR sensor
+  digitalWrite (digitalPIN, HIGH);
+  int  digitalReading = digitalRead(analogPIN);
+  printIRsensorValues(digitalReading
+  //End of IR sensor
+  delay(66);
 }
 
 
@@ -123,26 +128,14 @@ void completeHalt(){
   motorAllStop();
 }
 
-void printCompassValues(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float headingDegrees)
+void printIRsensorValues(int objectExists)
 {
-//   Serial.print("Raw:\t");
-//   Serial.print(raw.XAxis);
-//   Serial.print("   ");   
-//   Serial.print(raw.YAxis);
-//   Serial.print("\t");
-//   Serial.print("   ");   
-//   Serial.print(raw.ZAxis);
-//   Serial.print("   \tScaled:\t");
-//   
-//   Serial.print(scaled.XAxis);
-//   Serial.print("   ");   
-//   Serial.print(scaled.YAxis);
-//   Serial.print("   ");   
-//   Serial.print(scaled.ZAxis);
-//
-//   Serial.print("   \tHeading:\t");
-//   Serial.print(heading);
-//   Serial.print(" Radians   \t");
+   Serial.print(objectExists);
+   Serial.println(" ball");
+}
+
+void printCompassValues(float headingDegrees)
+{
    Serial.print(headingDegrees);
    Serial.println(" Degrees");
 }
@@ -172,6 +165,12 @@ void setup(){
   if(error != 0) // If there is an error, print it out.
     Serial.println(compass.getErrorText(error));
   //End of compass
+  
+  //For IR sensor
+  Serial.begin(9600);
+  pinMode (analogPIN, INPUT);
+  pinMode (digitalPIN, OUTPUT);              // sets pin 2 as digital input 
+  //End of IR sensor
   
   SDPsetup();
   helloWorld();
