@@ -125,11 +125,11 @@ void completeHalt(){
 
 void printCompassValues(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float headingDegrees)
 {
-   Serial.print("Raw:\t");
-   Serial.print(raw.XAxis);
-   Serial.print("   ");   
-   Serial.print(raw.YAxis);
-   Serial.print("\t");
+//   Serial.print("Raw:\t");
+//   Serial.print(raw.XAxis);
+//   Serial.print("   ");   
+//   Serial.print(raw.YAxis);
+//   Serial.print("\t");
 //   Serial.print("   ");   
 //   Serial.print(raw.ZAxis);
 //   Serial.print("   \tScaled:\t");
@@ -144,7 +144,7 @@ void printCompassValues(MagnetometerRaw raw, MagnetometerScaled scaled, float he
 //   Serial.print(heading);
 //   Serial.print(" Radians   \t");
    Serial.print(headingDegrees);
-   Serial.println(" Degrees   \t");
+   Serial.println(" Degrees");
 }
 
 void setup(){
