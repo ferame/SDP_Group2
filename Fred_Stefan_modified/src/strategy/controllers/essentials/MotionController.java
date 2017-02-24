@@ -90,13 +90,13 @@ public class MotionController extends ControllerBase {
 //        } else {
 //            System.out.println("Error in haveball var = " + haveBall);
 //        }
-        Boolean strategy = Behave.defend;
+        /*Boolean strategy = Behave.defend;
         if (strategy) defend(us);
-        else attack(us);
+        else attack(us);*/
+        attack(us);
     }
 
     private void attack(Robot us) {
-
 
         NavigationInterface navigation;
 
@@ -112,6 +112,9 @@ public class MotionController extends ControllerBase {
         System.out.println(compassReading + "");*/
 
         if (this.destination != null) {
+
+            System.out.println("attack");
+
             this.destination.recalculate();
 
             destination = new VectorGeometry(this.destination.getX(), this.destination.getY());
@@ -282,10 +285,10 @@ public class MotionController extends ControllerBase {
 //        System.out.println(rotation);
         //When robot is ~ facing the enemy goal, kick
 //        System.out.println("Rotation " + rotation + " ");
-        if (rotation < 40 && rotation > -40 && kick) {
+        if (rotation < 10 && rotation > -10 && kick) {
             //this.robot.port.stop();
             kick(us);
-        } else if (rotation < 40 && rotation > -40 && !kick) {
+        } else if (rotation < 10 && rotation > -10 && !kick) {
             /*try {
                 //this.robot.drive.moveForward(this.robot.port);
                 //Thread.sleep(200);
@@ -379,25 +382,33 @@ public class MotionController extends ControllerBase {
 
         if (this.destination == null) return;
 
+        System.out.println("defend");
+
+        ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
+
         VectorGeometry ourRobot = us.location;
-        System.out.println("ourRobot - " + ourRobot.toString());
+//        System.out.println("ourRobot - " + ourRobot.toString());
         VectorGeometry ball = Strategy.world.getBall().location;
-        System.out.println("ball - " + ball.toString());
+        if (ball == null) {
+            Robot enemy = Strategy.world.getRobot(Strategy.world.getProbableBallHolder());
+            ball = enemy.location;
+        }
+//        System.out.println("ball - " + ball.toString());
         VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH / 2, 0);
-        System.out.println("ourGoal - " + ourGoal.toString());
+//        System.out.println("ourGoal - " + ourGoal.toString());
         VectorGeometry robotToBall = ball.clone();
         robotToBall.minus(ourRobot);
-        System.out.println("robotToBall - " + robotToBall.toString());
+//        System.out.println("robotToBall - " + robotToBall.toString());
         VectorGeometry ballToGoal = ourGoal.clone();
-        ourGoal.minus(ball);
-        System.out.println("ballToGoal - " + ballToGoal.toString());
+        ballToGoal.minus(ball);
+//        System.out.println("ballToGoal - " + ballToGoal.toString());
         VectorGeometry negatedRobotToBall = robotToBall.clone();
         negatedRobotToBall.negate();
         double scalarProjection = VectorGeometry.dotProduct(negatedRobotToBall,ballToGoal)/ballToGoal.length();
         VectorGeometry projection = ballToGoal.multiply(scalarProjection/ballToGoal.length());
-        System.out.println("projection - " + projection.toString());
+//        System.out.println("projection - " + projection.toString());
         VectorGeometry closestDefencePoint = robotToBall.plus(projection);
-        System.out.println("closestDefence - " + closestDefencePoint.toString());
+//        System.out.println("closestDefence - " + closestDefencePoint.toString());
 
         NavigationInterface navigation = new AStarNavigation();
         navigation.setDestination(closestDefencePoint);
@@ -416,8 +427,9 @@ public class MotionController extends ControllerBase {
 
         double factor = 1;
 
-        if (us.location.distance(closestDefencePoint) > 5) {
-            System.out.println("Going to defence point");
+        if (us.location.distance(closestDefencePoint) < 20) factor = 0.5;
+
+        if (us.location.distance(closestDefencePoint) > 10) {
             this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
         }
 

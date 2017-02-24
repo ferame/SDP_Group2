@@ -3,7 +3,6 @@ package strategy.actions;
 import strategy.GUI;
 import strategy.Strategy;
 import strategy.WorldTools;
-import strategy.actions.defence.DefTac;
 import strategy.actions.other.DefendGoal;
 import strategy.actions.other.GoToSafeLocation;
 import strategy.actions.offense.OffensiveKick;
@@ -20,7 +19,7 @@ import vision.tools.VectorGeometry;
  * Created by Simon Rovder
  */
 enum BehaviourEnum{
-    DEFEND, SHUNT, KICK, SAFE, EMPTY, DEFTAC
+    DEFEND, SHUNT, KICK, SAFE, EMPTY
 }
 
 /**
@@ -65,8 +64,6 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             case SAFE:
                 this.enterAction(new GoToSafeLocation(this.robot), 0, 0);
                 break;
-            case DEFTAC:
-                this.enterAction(new DefTac(this.robot), 0,0);
 
         }
     }
@@ -79,17 +76,21 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         } else {
             Robot us = Strategy.world.getRobot(this.robot.robotType);
             Robot friend = Strategy.world.getRobot(this.robot.robotType.FRIEND_1);
+            System.out.println("In strategy chooser");
+
             if(us == null){
-                System.out.println("I'm lost!!!");
+                System.out.println("Fuck this shit");
 
             } else if(friend == null){
-                System.out.println("I don't see my teammate!!!");
-                this.nextState = BehaviourEnum.KICK;
-
-            } else if(us.location.distance(Math.abs(ball.location.x),Math.abs(ball.location.y)) < friend.location.distance(Math.abs(ball.location.x),Math.abs(ball.location.y))){
+                System.out.println("No ally");
                 this.nextState = BehaviourEnum.KICK;
                 defend = false;
-            } else{
+
+            } else if(us.location.distance(ball.location) < friend.location.distance(ball.location)){
+                System.out.println("kicking");
+                this.nextState = BehaviourEnum.KICK;
+                defend = false;
+            } else {
                 this.nextState = BehaviourEnum.DEFEND;
                 defend = true;
             }
