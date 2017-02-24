@@ -68,7 +68,7 @@ void loop(){
   //For IR sensor
   digitalWrite (digitalPIN, HIGH);
   int  digitalReading = digitalRead(analogPIN);
-  printIRsensorValues(digitalReading
+  printIRsensorValues(digitalReading);
   //End of IR sensor
   delay(66);
 }
