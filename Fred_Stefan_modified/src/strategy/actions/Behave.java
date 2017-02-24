@@ -3,6 +3,7 @@ package strategy.actions;
 import strategy.GUI;
 import strategy.Strategy;
 import strategy.WorldTools;
+import strategy.actions.defence.DefTac;
 import strategy.actions.other.DefendGoal;
 import strategy.actions.other.GoToSafeLocation;
 import strategy.actions.offense.OffensiveKick;
@@ -19,7 +20,7 @@ import vision.tools.VectorGeometry;
  * Created by Simon Rovder
  */
 enum BehaviourEnum{
-    DEFEND, SHUNT, KICK, SAFE, EMPTY
+    DEFEND, SHUNT, KICK, SAFE, EMPTY, DEFTAC
 }
 
 /**
@@ -29,6 +30,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
 
 
     public static boolean RESET = true;
+    public static boolean defend = true;
 
 
     public Behave(RobotBase robot){
@@ -63,6 +65,9 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             case SAFE:
                 this.enterAction(new GoToSafeLocation(this.robot), 0, 0);
                 break;
+            case DEFTAC:
+                this.enterAction(new DefTac(this.robot), 0,0);
+
         }
     }
 
@@ -73,10 +78,33 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             this.nextState = BehaviourEnum.DEFEND;
         } else {
             Robot us = Strategy.world.getRobot(this.robot.robotType);
+            Robot friend = Strategy.world.getRobot(this.robot.robotType.FRIEND_1);
             if(us == null){
                 System.out.println("I'm lost!!!");
 
-            } else {
+            } else if(friend == null){
+                System.out.println("I don't see my teammate!!!");
+                this.nextState = BehaviourEnum.KICK;
+
+            } else if(us.location.distance(Math.abs(ball.location.x),Math.abs(ball.location.y)) < friend.location.distance(Math.abs(ball.location.x),Math.abs(ball.location.y))){
+                this.nextState = BehaviourEnum.KICK;
+                defend = false;
+            } else{
+                this.nextState = BehaviourEnum.DEFEND;
+                defend = true;
+            }
+        }
+        return this.nextState;
+    }
+
+    protected BehaviourEnum getState2() {
+        Ball ball = Strategy.world.getBall();
+        if(ball == null){
+            this.nextState = BehaviourEnum.DEFEND;
+        } else {
+            Robot us = Strategy.world.getRobot(this.robot.robotType);
+            if(us == null){
+                System.out.println("I'm lost!!!");            } else {
                 VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
                 if(us.location.distance(ourGoal) > ball.location.distance(ourGoal)){
                     this.nextState = BehaviourEnum.SAFE;
@@ -100,3 +128,4 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         return this.nextState;
     }
 }
+

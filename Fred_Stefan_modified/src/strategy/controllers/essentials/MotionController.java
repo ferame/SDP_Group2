@@ -4,6 +4,7 @@ import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
 import communication.ports.robotPorts.FredRobotPort;
 import strategy.StaticVariables;
 import strategy.Strategy;
+import strategy.actions.Behave;
 import strategy.controllers.ControllerBase;
 import strategy.navigation.NavigationInterface;
 import strategy.navigation.Obstacle;
@@ -89,9 +90,9 @@ public class MotionController extends ControllerBase {
 //        } else {
 //            System.out.println("Error in haveball var = " + haveBall);
 //        }
-        Boolean strategy = false;
-        if (strategy) attack(us);
-        else defend(us);
+        Boolean strategy = Behave.defend;
+        if (strategy) defend(us);
+        else attack(us);
     }
 
     private void attack(Robot us) {
