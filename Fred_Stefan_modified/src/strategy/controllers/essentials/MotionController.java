@@ -1,8 +1,10 @@
 package strategy.controllers.essentials;
 
+import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
 import communication.ports.robotPorts.FredRobotPort;
 import strategy.StaticVariables;
 import strategy.Strategy;
+import strategy.actions.Behave;
 import strategy.controllers.ControllerBase;
 import strategy.navigation.NavigationInterface;
 import strategy.navigation.Obstacle;
@@ -71,6 +73,7 @@ public class MotionController extends ControllerBase {
     }
 
     public void perform() {
+
         if (this.mode == MotionMode.OFF) return;
 
         Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
@@ -87,16 +90,26 @@ public class MotionController extends ControllerBase {
 //        } else {
 //            System.out.println("Error in haveball var = " + haveBall);
 //        }
-        move(us);
+        Boolean strategy = Behave.defend;
+        if (strategy) defend(us);
+        else attack(us);
     }
 
-    private void move(Robot us) {
+    private void attack(Robot us) {
 
 
         NavigationInterface navigation;
 
         VectorGeometry heading = null;
         VectorGeometry destination = null;
+
+        double compassReading = 0.0;
+
+        /*String input = this.robot.port.getInput();
+        if (input.contains("Degrees")) {
+            compassReading = Double.parseDouble(input.substring(0,6));
+        }
+        System.out.println(compassReading + "");*/
 
         if (this.destination != null) {
             this.destination.recalculate();
@@ -133,9 +146,9 @@ public class MotionController extends ControllerBase {
                     ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
                 }
 
-            } else if (us.location.distance(destination) > 22 /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
+            } else if (us.location.distance(destination) > 21 /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
                 navigation = new AStarNavigation();
-                StaticVariables.haveBall = false;
+                //StaticVariables.haveBall = false;
                 //navigation = new PotentialFieldNavigation();
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
@@ -146,13 +159,20 @@ public class MotionController extends ControllerBase {
                         ((FredRobotPort) this.robot.port).propeller(100);
                     }
                 }
+                else {
+                    for (int i = 0; i < 5; i++) {
+                        ((FredRobotPort) this.robot.port).propeller(-100);
+                    }
+                }
             } else {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+                destination = determineDestination(us, destination);
+                rotate(us, destination, StaticVariables.haveBall);
 
                 if (StaticVariables.haveBall/* && StaticVariables.ballkicks == 0*/) {
-                    /*for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 5; i++) {
                         ((FredRobotPort) this.robot.port).propeller(-100);
-                    }*/
+                    }
 //                    System.out.println("Rotate to goal");
 
                     VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
@@ -262,20 +282,20 @@ public class MotionController extends ControllerBase {
 //        System.out.println(rotation);
         //When robot is ~ facing the enemy goal, kick
 //        System.out.println("Rotation " + rotation + " ");
-        if (rotation < 30 && rotation > -30 && kick) {
-            this.robot.port.stop();
+        if (rotation < 40 && rotation > -40 && kick) {
+            //this.robot.port.stop();
             kick(us);
         } else if (rotation < 40 && rotation > -40 && !kick) {
-            try {
-                this.robot.drive.moveForward(this.robot.port);
-                Thread.sleep(300);
+            /*try {
+                //this.robot.drive.moveForward(this.robot.port);
+                //Thread.sleep(200);
                 catchBall(us);
-            }
-            catch (InterruptedException ex){
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-            }
+            }*/
+            catchBall(us);
         } else {
-            if (rotation<0) this.robot.drive.rotate(this.robot.port, -factor);
+            if (rotation < 0) this.robot.drive.rotate(this.robot.port, -factor);
             else this.robot.drive.rotate(this.robot.port, factor);
         }
 
@@ -320,4 +340,87 @@ public class MotionController extends ControllerBase {
 //        StaticVariables.ballkicks = 0;
         StaticVariables.haveBall = true;
     }
+
+    private VectorGeometry determineDestination(Robot us, VectorGeometry oldDestination) {
+
+        if (!StaticVariables.haveBall) {
+            return oldDestination;
+        }
+
+        VectorGeometry enemyGoal = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
+        // This may break if we can't find the other friendly robot
+        VectorGeometry alliedRobot = Strategy.world.getRobot(RobotType.FRIEND_1).location;
+        boolean canPassToGoal = true;
+        boolean canPassToAlly = true;
+
+        // Make Sure this does not cause infinite loop
+        for (Obstacle o : this.obstacles) {
+            canPassToGoal = canPassToGoal && !o.intersects(us.location, enemyGoal);
+            //System.out.println("Check Obstacle");
+        }
+        for (Obstacle o : this.obstacles) {
+            canPassToAlly = canPassToAlly && !o.intersects(us.location, alliedRobot);
+            //System.out.println("Check Obstacle");
+        }
+
+        VectorGeometry newDestination = null;
+        if (us.location.distance(enemyGoal) < 75 && canPassToGoal) {
+            newDestination = enemyGoal;
+        } else if (canPassToAlly) {
+            newDestination = alliedRobot;
+        } else {
+            newDestination = enemyGoal;
+        }
+        return newDestination;
+
+    }
+
+    private void defend (Robot us) {
+
+        if (this.destination == null) return;
+
+        VectorGeometry ourRobot = us.location;
+        System.out.println("ourRobot - " + ourRobot.toString());
+        VectorGeometry ball = Strategy.world.getBall().location;
+        System.out.println("ball - " + ball.toString());
+        VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH / 2, 0);
+        System.out.println("ourGoal - " + ourGoal.toString());
+        VectorGeometry robotToBall = ball.clone();
+        robotToBall.minus(ourRobot);
+        System.out.println("robotToBall - " + robotToBall.toString());
+        VectorGeometry ballToGoal = ourGoal.clone();
+        ourGoal.minus(ball);
+        System.out.println("ballToGoal - " + ballToGoal.toString());
+        VectorGeometry negatedRobotToBall = robotToBall.clone();
+        negatedRobotToBall.negate();
+        double scalarProjection = VectorGeometry.dotProduct(negatedRobotToBall,ballToGoal)/ballToGoal.length();
+        VectorGeometry projection = ballToGoal.multiply(scalarProjection/ballToGoal.length());
+        System.out.println("projection - " + projection.toString());
+        VectorGeometry closestDefencePoint = robotToBall.plus(projection);
+        System.out.println("closestDefence - " + closestDefencePoint.toString());
+
+        NavigationInterface navigation = new AStarNavigation();
+        navigation.setDestination(closestDefencePoint);
+        navigation.setHeading(ball);
+
+        VectorGeometry force = navigation.getForce();
+        if (force == null) {
+            this.robot.port.stop();
+            System.out.println("Force is null");
+            return;
+        }
+
+        VectorGeometry robotHeading = VectorGeometry.fromAngular(us.location.direction, 10, null);
+        VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, closestDefencePoint);
+        double rotation = VectorGeometry.signedAngle(robotToPoint, robotHeading);
+
+        double factor = 1;
+
+        if (us.location.distance(closestDefencePoint) > 5) {
+            System.out.println("Going to defence point");
+            this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
+        }
+
+    }
+
 }

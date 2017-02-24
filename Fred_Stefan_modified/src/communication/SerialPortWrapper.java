@@ -58,6 +58,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
         this.nextString(s);
     }
 
+
     @Override
     public void serialEvent(SerialPortEvent event) {
         if(event.isRXCHAR() && event.getEventValue() > 0){
