@@ -65,9 +65,9 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         assert(port instanceof FourWheelHolonomicRobotPort);
 
         double front = 0;
-        double back = 60;
-        double left = 60;
-        double right = 60;
+        double back = 40;
+        double left = 40;
+        double right = 40;
 
         if (force<0) {
             back *= -1;

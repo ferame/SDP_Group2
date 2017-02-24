@@ -31,7 +31,7 @@ public class Demo3 extends ActionBase {
         int MAX_ROTATION = 30;
         int MAX_MOTION = 200;
         int factor = 1;
-        double x = 0, y = 1, w = 0;
+        double x = 1, y = 0, w = 0;
 
         double[][] a = new double[3][3];
         a[0][0] = 0.58; a[0][1] = -0.33; a[0][2] = 0.33;
@@ -62,6 +62,14 @@ public class Demo3 extends ActionBase {
         right = right/normalizer * 100;
 
         ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(front, back, left, -right);
+
+        double compassReading = 0.0;
+
+        String input = this.robot.port.getInput();
+        if (input.contains("Degrees")) {
+            compassReading = Double.parseDouble(input.substring(0,6));
+        }
+        System.out.println(compassReading + "");
 
         this.state = newState;
     }
