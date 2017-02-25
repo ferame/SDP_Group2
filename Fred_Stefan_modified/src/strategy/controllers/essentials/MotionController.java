@@ -88,11 +88,6 @@ public class MotionController extends ControllerBase {
 //        } else if (haveBall == 1) {
 //            VectorGeometry destination = determineDestination(us, destination);;
 //            rotate(us, destination, true);
-//        } else if (haveBall == 2) {
-//            kickOrCatch(us, true);
-//        } else {
-//            System.out.println("Error in haveball var = " + haveBall);
-//        }
         /*Boolean strategy = Behave.defend;
         if (strategy) defend(us);
         else attack(us);*/
