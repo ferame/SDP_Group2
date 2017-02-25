@@ -73,17 +73,11 @@ public class Status {
             } else {
                 chosen = Behaviour.ATTACK;
             }
-
-            if(chosen != lastBehaviour){
-                this.behaviour = chosen;
-            } else {
-                this.behaviour = lastBehaviour;
-            }
+            this.behaviour = chosen;
         } else {
             this.behaviour = fixedBehaviour;
         }
 
-//        this.behaviour = chosen;
         lastBehaviour = this.behaviour;
 
 

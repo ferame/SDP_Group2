@@ -7,7 +7,7 @@ import strategy.actions.other.GoToSafeLocation;
 import strategy.actions.other.Goto;
 import strategy.actions.offense.OffensiveKick;
 import strategy.actions.other.Waiting;
-import strategy.drives.FourWheelHolonomicDrive;
+import strategy.drives.ThreeWheelHolonomicDrive;
 import strategy.points.basicPoints.*;
 import strategy.controllers.essentials.MotionController;
 import communication.ports.robotPorts.FredRobotPort;
@@ -234,7 +234,7 @@ public class GUI extends JFrame implements KeyListener{
     @Override
     public void keyReleased(KeyEvent e) {
         if(this.robot instanceof Fred){
-            FourWheelHolonomicDrive drive = (FourWheelHolonomicDrive)this.robot.drive;
+            ThreeWheelHolonomicDrive drive = (ThreeWheelHolonomicDrive)this.robot.drive;
             if(e.getSource() == this.maxSpeed){
                 System.out.println("SpeedChange");
                 try{

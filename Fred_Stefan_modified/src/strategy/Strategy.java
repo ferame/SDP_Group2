@@ -3,7 +3,6 @@ package strategy;
 import strategy.actions.Behave;
 import strategy.actions.other.*;
 import strategy.actions.offense.OffensiveKick;
-import strategy.actions.offense.ShuntKick;
 import communication.ports.robotPorts.FredRobotPort;
 import strategy.points.basicPoints.*;
 import strategy.robots.Fred;
@@ -122,13 +121,12 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     fred.ACTION_CONTROLLER.setAction(new Waiting(fred));
                     fred.MOTION_CONTROLLER.setDestination(null);
                     fred.MOTION_CONTROLLER.setHeading(null);
-                    port.halt();
-                    port.halt();
-                    port.halt();
                     fred.PROPELLER_CONTROLLER.setActive(false);
-                    port.propeller(0);
-                    port.propeller(0);
-                    port.propeller(0);
+                    for (int i = 0; i < 9; i++) {
+                        port.halt();
+                        port.propeller(0);
+
+                    }
                     break;
                 case "ping":
                     port.ping();
@@ -148,9 +146,6 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     break;
                 case "safe":
                     fred.ACTION_CONTROLLER.setAction(new GoToSafeLocation(fred));
-                    break;
-                case "shunt":
-                    fred.ACTION_CONTROLLER.setAction(new ShuntKick(fred));
                     break;
                 case "demo":
                     fred.ACTION_CONTROLLER.setAction(new Demo(fred));

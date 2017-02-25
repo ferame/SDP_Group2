@@ -1,8 +1,5 @@
 package strategy.actions.other;
 
-import communication.ports.interfaces.FourWheelHolonomicRobotPort;
-import communication.ports.robotPorts.FredRobotPort;
-import strategy.StaticVariables;
 import strategy.Strategy;
 import strategy.actions.ActionBase;
 import strategy.actions.ActionException;
@@ -12,8 +9,6 @@ import vision.Robot;
 import vision.RobotType;
 import vision.constants.Constants;
 import vision.tools.VectorGeometry;
-
-import java.util.Arrays;
 
 /**
  * Created by Simon Rovder
@@ -33,9 +28,9 @@ public class Demo2 extends ActionBase {
         if (count == 3) return;
         this.robot.MOTION_CONTROLLER.setActive(false);
         /*if(newState == 0){
-            ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(255,255,255,255);
+            ((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(255,255,255,255);
         } else {
-            ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(-255,-255,-255,-255);
+            ((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(-255,-255,-255,-255);
         }*/
         Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
         VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);

@@ -88,9 +88,9 @@ public class MotionController extends ControllerBase {
 //        } else if (haveBall == 1) {
 //            VectorGeometry destination = determineDestination(us, destination);;
 //            rotate(us, destination, true);
-        /*Boolean strategy = Behave.defend;
+        Boolean strategy = Behave.defend;
         if (strategy) defend(us);
-        else attack(us);*/
+        else attack(us);
         attack(us);
     }
 
@@ -143,7 +143,7 @@ public class MotionController extends ControllerBase {
                 navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
 //                System.out.println("A* Prop down");
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 8; i++) {
                     ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
                 }
 
@@ -156,12 +156,12 @@ public class MotionController extends ControllerBase {
                 System.out.println("Closer to ball: " + us.location.distance(destination));
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
                 if (!StaticVariables.haveBall) {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 8; i++) {
                         ((FredRobotPort) this.robot.port).propeller(100);
                     }
                 }
                 else {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 8; i++) {
                         ((FredRobotPort) this.robot.port).propeller(-100);
                     }
                 }
@@ -171,7 +171,7 @@ public class MotionController extends ControllerBase {
                 rotate(us, destination, StaticVariables.haveBall);
 
                 if (StaticVariables.haveBall/* && StaticVariables.ballkicks == 0*/) {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 8; i++) {
                         ((FredRobotPort) this.robot.port).propeller(-100);
                     }
 //                    System.out.println("Rotate to goal");
@@ -180,7 +180,7 @@ public class MotionController extends ControllerBase {
                     rotate(us, dest, true);
                     return;
                 } else {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 8; i++) {
                         ((FredRobotPort) this.robot.port).propeller(100);
                     }
 //                    System.out.println("Rotate to ball");
@@ -276,16 +276,11 @@ public class MotionController extends ControllerBase {
         VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, heading);
         double factor = 1;
         double rotation = VectorGeometry.radToDeg(VectorGeometry.signedAngle(robotToPoint, robotHeading));
-//        StaticVariables.recentRotations[(int) StaticVariables.recentRotations[3]] = rotation;
-//        StaticVariables.recentRotations[0] = StaticVariables.recentRotations[0] + 1 % 3;
-//
-//        rotation = StaticVariables.recentRotations[0] + StaticVariables.recentRotations[1] + StaticVariables.recentRotations[2] / 3;
-//        System.out.println(rotation);
-        //When robot is ~ facing the enemy goal, kick
-//        System.out.println("Rotation " + rotation + " ");
         if (rotation < 10 && rotation > -10 && kick) {
             //this.robot.port.stop();
-            kick(us);
+            double force = us.location.distance(rotationDestination);
+            System.out.println("kickforce" + force);
+            kick(us, (int) Math.round(force));
         } else if (rotation < 10 && rotation > -10 && !kick) {
             /*try {
                 //this.robot.drive.moveForward(this.robot.port);
@@ -304,23 +299,19 @@ public class MotionController extends ControllerBase {
     }
 
     // Only the actual kicking happens here. it is called from rotate
-    private void kick(Robot us) {
+    private void kick(Robot us, int power) {
 //            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
 //            for (int i = 0; i < 5; i++) {
 //                ((FredRobotPort) this.robot.port).propeller(-50);
 //            }
-        //StaticVariables.ballkicks++;
         StaticVariables.haveBall = false;
         System.out.println("Kick");
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 8; i++) {
             ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            ((FredRobotPort) this.robot.port).propeller(100);
+            ((FredRobotPort) this.robot.port).propeller(power);
         }
         try {
             Thread.sleep(500);
-//                for (int i = 0; i < 9; i++) {
-//                    ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
-//                }
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
@@ -329,7 +320,7 @@ public class MotionController extends ControllerBase {
 
     private void catchBall(Robot us) {
         System.out.println("Catch");
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 8; i++) {
             ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
             ((FredRobotPort) this.robot.port).propeller(-100);
         }
@@ -338,7 +329,6 @@ public class MotionController extends ControllerBase {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-//        StaticVariables.ballkicks = 0;
         StaticVariables.haveBall = true;
     }
 
@@ -367,7 +357,7 @@ public class MotionController extends ControllerBase {
         VectorGeometry newDestination = null;
         if (us.location.distance(enemyGoal) < 75 && canPassToGoal) {
             newDestination = enemyGoal;
-        } else if (canPassToAlly) {
+        } else if (canPassToAlly && alliedRobot != null) {
             newDestination = alliedRobot;
         } else {
             newDestination = enemyGoal;
@@ -429,7 +419,7 @@ public class MotionController extends ControllerBase {
 
         if (us.location.distance(closestDefencePoint) > 10) {
             this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
-        }
+        } // else Motors.stop ?
 
     }
 

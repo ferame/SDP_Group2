@@ -1,6 +1,6 @@
 package strategy.actions.other;
 
-import communication.ports.interfaces.FourWheelHolonomicRobotPort;
+import communication.ports.interfaces.ThreeWheelHolonomicRobotPort;
 import strategy.actions.ActionBase;
 import strategy.actions.ActionException;
 import strategy.robots.Fred;
@@ -23,9 +23,9 @@ public class Demo3 extends ActionBase {
     public void enterState(int newState) {
         this.robot.MOTION_CONTROLLER.setActive(false);
         /*if(newState == 0){
-            ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(255,255,255,255);
+            ((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(255,255,255,255);
         } else {
-            ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(-255,-255,-255,-255);
+            ((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(-255,-255,-255,-255);
         }*/
 
         int MAX_ROTATION = 30;
@@ -61,7 +61,7 @@ public class Demo3 extends ActionBase {
         left = left/normalizer * 100;
         right = right/normalizer * 100;
 
-        ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(front, back, left, -right);
+        ((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(back, left, -right);
 
         double compassReading = 0.0;
 

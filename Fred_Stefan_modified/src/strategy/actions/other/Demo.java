@@ -1,7 +1,5 @@
 package strategy.actions.other;
 
-import communication.ports.interfaces.FourWheelHolonomicRobotPort;
-import communication.ports.interfaces.PropellerEquipedRobotPort;
 import strategy.actions.ActionException;
 import strategy.actions.ActionBase;
 import strategy.robots.Fred;
@@ -24,11 +22,11 @@ public class Demo extends ActionBase {
     public void enterState(int newState) {
         this.robot.MOTION_CONTROLLER.setActive(false);
         /*if(newState == 0){
-            ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(255,255,255,255);
+            ((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(255,255,255,255);
         } else {
-            ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(-255,-255,-255,-255);
+            ((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(-255,-255,-255,-255);
         }*/
-        //((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(0,0,100,-100);
+        //((ThreeWheelHolonomicRobotPort)this.robot.port).threeWheelHolonomicMotion(0,0,100,-100);
         this.state = newState;
 
         double compassReading = 0.0;
