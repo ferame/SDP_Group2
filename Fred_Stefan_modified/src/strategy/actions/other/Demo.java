@@ -28,7 +28,17 @@ public class Demo extends ActionBase {
         } else {
             ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(-255,-255,-255,-255);
         }*/
-        ((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(0,0,100,-100);
+        //((FourWheelHolonomicRobotPort)this.robot.port).fourWheelHolonomicMotion(0,0,100,-100);
+        this.state = newState;
+
+        double compassReading = 0.0;
+
+        String input = this.robot.port.getInput();
+        if (input.contains("Degrees")) {
+            compassReading = Double.parseDouble(input.substring(0,6));
+        }
+        System.out.println(compassReading + "");
+
         this.state = newState;
     }
 

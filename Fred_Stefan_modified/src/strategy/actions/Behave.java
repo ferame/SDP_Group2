@@ -29,6 +29,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
 
 
     public static boolean RESET = true;
+    public static boolean defend = true;
 
 
     public Behave(RobotBase robot){
@@ -63,6 +64,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             case SAFE:
                 this.enterAction(new GoToSafeLocation(this.robot), 0, 0);
                 break;
+
         }
     }
 
@@ -73,10 +75,37 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             this.nextState = BehaviourEnum.DEFEND;
         } else {
             Robot us = Strategy.world.getRobot(this.robot.robotType);
-            if(us == null){
-                System.out.println("I'm lost!!!");
+            Robot friend = Strategy.world.getRobot(this.robot.robotType.FRIEND_1);
+            System.out.println("In strategy chooser");
 
+            if(us == null){
+                System.out.println("Fuck this shit");
+
+            } else if(friend == null){
+                System.out.println("No ally");
+                this.nextState = BehaviourEnum.KICK;
+                defend = false;
+
+            } else if(us.location.distance(ball.location) < friend.location.distance(ball.location)){
+                System.out.println("kicking");
+                this.nextState = BehaviourEnum.KICK;
+                defend = false;
             } else {
+                this.nextState = BehaviourEnum.DEFEND;
+                defend = true;
+            }
+        }
+        return this.nextState;
+    }
+
+    protected BehaviourEnum getState2() {
+        Ball ball = Strategy.world.getBall();
+        if(ball == null){
+            this.nextState = BehaviourEnum.DEFEND;
+        } else {
+            Robot us = Strategy.world.getRobot(this.robot.robotType);
+            if(us == null){
+                System.out.println("I'm lost!!!");            } else {
                 VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
                 if(us.location.distance(ourGoal) > ball.location.distance(ourGoal)){
                     this.nextState = BehaviourEnum.SAFE;
@@ -100,3 +129,4 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         return this.nextState;
     }
 }
+
