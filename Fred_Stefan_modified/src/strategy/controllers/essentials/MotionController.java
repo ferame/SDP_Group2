@@ -78,12 +78,15 @@ public class MotionController extends ControllerBase {
         Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
         if (us == null) return;
 
+        String distanceSensor = this.robot.port.getInput();
+        System.out.println("sensor: " + distanceSensor);
+
         // For now haveBall is always 0 and move function calls rotate (if ball is close to the robot), which then calls kick if we are facing the goal (this probably needs calibration)
 //        if (haveBall == 0) {
 //            move(us);
 //        } else if (haveBall == 1) {
-//            VectorGeometry dest = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
-//            rotate(us, dest, true);
+//            VectorGeometry destination = determineDestination(us, destination);;
+//            rotate(us, destination, true);
 //        } else if (haveBall == 2) {
 //            kickOrCatch(us, true);
 //        } else {
