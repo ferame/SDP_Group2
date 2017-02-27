@@ -87,9 +87,9 @@ public class MotionController extends ControllerBase {
 //            VectorGeometry destination = determineDestination(us, destination);;
 //            rotate(us, destination, true);
         Boolean strategy = Behave.defend;
-        //if (strategy) defend(us);
-        //else attack(us);
-        attack(us);
+        if (strategy) defend(us);
+        else attack(us);
+        //attack(us);
         //defend(us);
     }
 
@@ -131,7 +131,7 @@ public class MotionController extends ControllerBase {
             }
 //            System.out.println(us.location.distance(destination));
             // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
-            if ( /*intersects ||  */ us.location.distance(destination) > 55) {
+            if ( /*intersects ||  */ us.location.distance(destination) > 55 && !haveBall) {
                 //StaticVariables.ballkicks = 0;
                 navigation = new AStarNavigation();
 //                navigation = new PotentialFieldNavigation();
@@ -142,7 +142,7 @@ public class MotionController extends ControllerBase {
                     ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
                 }
 
-            } else if (us.location.distance(destination) > 21 /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
+            } else if (us.location.distance(destination) > 21.5 && !haveBall /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
                 navigation = new AStarNavigation();
                 //StaticVariables.haveBall = false;
                 //navigation = new PotentialFieldNavigation();
@@ -163,7 +163,7 @@ public class MotionController extends ControllerBase {
             } else {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
                 destination = determineDestination(us, destination);
-
+                System.out.println(haveBall);
                 if (haveBall/* && StaticVariables.ballkicks == 0*/) {
                     for (int i = 0; i < 8; i++) {
                         ((FredRobotPort) this.robot.port).propeller(-100);
@@ -174,8 +174,19 @@ public class MotionController extends ControllerBase {
                     for (int i = 0; i < 8; i++) {
                         ((FredRobotPort) this.robot.port).propeller(100);
                     }
-                    rotate(us, destination, false);
-                    return;
+                    if (us.location.distance(destination) > 19.5){
+                        navigation = new AStarNavigation();
+                        //StaticVariables.haveBall = false;
+                        //navigation = new PotentialFieldNavigation();
+                        navigation.setHeading(destination);
+                        GUI.gui.searchType.setText("A*");
+                        System.out.println("Move before rotating " + us.location.distance(destination));
+
+                    } else {
+                        rotate(us, destination, false);
+                        return;
+
+                    }
                 }
             }
             // Potential field navigation is disabled for now
@@ -257,19 +268,18 @@ public class MotionController extends ControllerBase {
             }
         }*/
 
-        if (this.heading != null) {
+        /*if (this.heading != null) {
             this.heading.recalculate();
             heading = new VectorGeometry(this.heading.getX(), this.heading.getY());
-        } else heading = VectorGeometry.fromAngular(us.location.direction, 10, null);
+        } else heading = VectorGeometry.fromAngular(us.location.direction, 10, null);*/
 
         VectorGeometry robotHeading = VectorGeometry.fromAngular(us.location.direction, 10, null);
-        VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, heading);
+        VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, rotationDestination);
         double factor = 1;
         double rotation = VectorGeometry.radToDeg(VectorGeometry.signedAngle(robotToPoint, robotHeading));
         if (rotation < 10 && rotation > -10 && kick) {
-            //this.robot.port.stop();
             double force = us.location.distance(rotationDestination);
-            System.out.println("kickforce" + force);
+            //System.out.println("kickforce" + force);
             kick(us, (int) Math.round(force));
         } else if (rotation < 10 && rotation > -10 && !kick) {
             /*try {
@@ -281,8 +291,8 @@ public class MotionController extends ControllerBase {
             }*/
             catchBall(us);
         } else {
-            if (rotation < 0) this.robot.drive.rotate(this.robot.port, -factor);
-            else this.robot.drive.rotate(this.robot.port, factor);
+            if (rotation < 0) this.robot.drive.rotate(this.robot.port, rotation);
+            else this.robot.drive.rotate(this.robot.port, rotation);
         }
 
 
@@ -295,11 +305,16 @@ public class MotionController extends ControllerBase {
 //                ((FredRobotPort) this.robot.port).propeller(-50);
 //            }
         System.out.println("Kick");
-        for (int i = 0; i < 8; i++) {
-            ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
-            ((FredRobotPort) this.robot.port).propeller(100);
-        }
+
         try {
+            for(int i=0;i<8;i++) {
+                this.robot.port.stop();
+            }
+            Thread.sleep(500);
+            for (int i = 0; i < 8; i++) {
+                ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
+                ((FredRobotPort) this.robot.port).propeller(100);
+            }
             Thread.sleep(500);
 
         } catch (InterruptedException ex) {
@@ -329,24 +344,29 @@ public class MotionController extends ControllerBase {
 
         VectorGeometry enemyGoal = new VectorGeometry(Constants.PITCH_WIDTH / 2, 0);
         // This may break if we can't find the other friendly robot
-        VectorGeometry alliedRobot = Strategy.world.getRobot(RobotType.FRIEND_1).location;
+        VectorGeometry alliedRobot = null;
         boolean canPassToGoal = true;
         boolean canPassToAlly = true;
+        if (Strategy.world.getRobot(RobotType.FRIEND_1) != null){
+            alliedRobot = Strategy.world.getRobot(RobotType.FRIEND_1).location;
+            for (Obstacle o : this.obstacles) {
+                canPassToAlly = canPassToAlly && !o.intersects(us.location, alliedRobot);
+                //System.out.println("Check Obstacle");
+            }
+        }
+
 
         // Make Sure this does not cause infinite loop
         for (Obstacle o : this.obstacles) {
             canPassToGoal = canPassToGoal && !o.intersects(us.location, enemyGoal);
             //System.out.println("Check Obstacle");
         }
-        for (Obstacle o : this.obstacles) {
-            canPassToAlly = canPassToAlly && !o.intersects(us.location, alliedRobot);
-            //System.out.println("Check Obstacle");
-        }
+
 
         VectorGeometry newDestination = null;
-        if (us.location.distance(enemyGoal) < 75 && canPassToGoal) {
+        if (us.location.distance(enemyGoal) < 120 && canPassToGoal) {
             newDestination = enemyGoal;
-            System.out.println("Trying to score!");
+            System.out.println("Trying to score! normal");
         } else if (canPassToAlly && alliedRobot != null) {
             newDestination = alliedRobot;
             System.out.println("Trying to pass!");

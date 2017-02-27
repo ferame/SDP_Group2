@@ -62,9 +62,9 @@ public class ThreeWheelHolonomicDrive implements DriveInterface{
     public void rotate(RobotPort port, double force){
         assert(port instanceof ThreeWheelHolonomicRobotPort);
 
-        double back = 40;
-        double left = 40;
-        double right = 40;
+        double back = Math.max((0.55 * Math.abs(force)), 35);
+        double left = Math.max((0.55 * Math.abs(force)), 35);
+        double right = Math.max((0.55 * Math.abs(force)), 35);
 
         if (force<0) {
             back *= -1;

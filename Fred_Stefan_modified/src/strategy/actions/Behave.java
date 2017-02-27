@@ -66,6 +66,9 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
 
     @Override
     protected BehaviourEnum getState() {
+
+        String distanceSensor = this.robot.port.getInput();
+        if (distanceSensor.contains("0")) {defend = false; return this.nextState;}
         Ball ball = Strategy.world.getBall();
         if(ball == null){
             this.nextState = BehaviourEnum.DEFEND;
@@ -80,12 +83,14 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
 
             if(us == null){
                 System.out.println("Fuck this shit");
+                defend = true;
 
             } else
 
                 if(us.location.distance(ourGoal) > ball.location.distance(ourGoal)){
                 System.out.println("GOAL IS OPEN !!! RETREATING !!");
                 this.nextState = BehaviourEnum.SAFE;
+                    defend = true;
 
             } else if(friend == null){
                 System.out.println("No ally");
