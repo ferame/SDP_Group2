@@ -69,6 +69,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         Ball ball = Strategy.world.getBall();
         if(ball == null){
             this.nextState = BehaviourEnum.DEFEND;
+            defend = true;
         } else {
             VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
             Robot us = Strategy.world.getRobot(this.robot.robotType);
@@ -117,7 +118,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         return this.nextState;
     }
 
-    protected BehaviourEnum getState2() {
+    /*protected BehaviourEnum getState2() {
         Ball ball = Strategy.world.getBall();
         if(ball == null){
             this.nextState = BehaviourEnum.DEFEND;
@@ -146,6 +147,6 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             }
         }
         return this.nextState;
-    }
+    }*/
 }
 
