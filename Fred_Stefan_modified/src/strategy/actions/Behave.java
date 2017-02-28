@@ -68,7 +68,10 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
     protected BehaviourEnum getState() {
 
         String distanceSensor = this.robot.port.getInput();
-        if (distanceSensor.contains("0")) {defend = false; return this.nextState;}
+        boolean res1 = distanceSensor.contains("0");
+        boolean res2 = distanceSensor.contains("0");
+        boolean res3 = distanceSensor.contains("0");
+        if ((res1 && res2) || (res1 && res3) || (res2 && res3)) {defend = false; return this.nextState;}
         Ball ball = Strategy.world.getBall();
         if(ball == null){
             this.nextState = BehaviourEnum.DEFEND;
@@ -79,7 +82,6 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             Robot friend = Strategy.world.getRobot(this.robot.robotType.FRIEND_1);
             Robot foe1 = Strategy.world.getRobot(this.robot.robotType.FOE_1);
             Robot foe2 = Strategy.world.getRobot(this.robot.robotType.FOE_2);
-            System.out.println("In strategy chooser");
 
             if(us == null){
                 System.out.println("Fuck this shit");
@@ -99,7 +101,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
 
             } else if(us.location.distance(ball.location) < friend.location.distance(ball.location)){
                 if(WorldTools.isPointInEnemyDefenceArea2(ball.location)) {
-                    if(us.location.distance(ball.location) > foe1.location.distance(ball.location) || us.location.distance(ball.location) > foe2.location.distance(ball.location)) {
+                    if(foe1 != null && foe2!=null && (us.location.distance(ball.location) > foe1.location.distance(ball.location) || us.location.distance(ball.location) > foe2.location.distance(ball.location))) {
                         System.out.println("An enemy is closer to the ball than me / defending");
                         this.nextState = BehaviourEnum.DEFEND;
                         defend = true;
@@ -116,6 +118,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
                     defend = false;
                 }
             } else {
+                    System.out.println("defending");
                 this.nextState = BehaviourEnum.DEFEND;
                 defend = true;
             }

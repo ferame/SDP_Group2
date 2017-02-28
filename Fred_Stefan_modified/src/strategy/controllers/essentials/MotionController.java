@@ -310,7 +310,7 @@ public class MotionController extends ControllerBase {
             for(int i=0;i<8;i++) {
                 this.robot.port.stop();
             }
-            Thread.sleep(500);
+            Thread.sleep(1000);
             for (int i = 0; i < 8; i++) {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
                 ((FredRobotPort) this.robot.port).propeller(100);
@@ -353,7 +353,11 @@ public class MotionController extends ControllerBase {
                 canPassToAlly = canPassToAlly && !o.intersects(us.location, alliedRobot);
                 //System.out.println("Check Obstacle");
             }
+            if (us.location.distance(enemyGoal) < alliedRobot.distance(enemyGoal)) canPassToAlly = false;
         }
+        else canPassToAlly = false;
+
+
 
 
         // Make Sure this does not cause infinite loop
@@ -367,7 +371,7 @@ public class MotionController extends ControllerBase {
         if (us.location.distance(enemyGoal) < 120 && canPassToGoal) {
             newDestination = enemyGoal;
             System.out.println("Trying to score! normal");
-        } else if (canPassToAlly && alliedRobot != null) {
+        } else if (canPassToAlly) {
             newDestination = alliedRobot;
             System.out.println("Trying to pass!");
         } else {
