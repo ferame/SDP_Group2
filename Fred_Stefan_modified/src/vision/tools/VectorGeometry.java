@@ -16,6 +16,22 @@ public class VectorGeometry {
         this.y = y;
     }
 
+    public VectorGeometry( VectorGeometry p1, VectorGeometry p2){
+        this( p1.getX() - p2.getX(), p1.getY() - p2.getY() );
+    }
+
+    public double getX(){
+        return x;
+    }
+
+    public double getY(){
+        return y;
+    }
+
+    public boolean isCollinear( VectorGeometry v ){
+        return y*v.getX() == x*v.getY();
+    }
+
     @Override
     public VectorGeometry clone(){
         return new VectorGeometry(this.x, this.y);
@@ -211,6 +227,14 @@ public class VectorGeometry {
         return res;
     }
 
+    public static double angle(double x1, double y1, double x2, double y2, double x3, double y3){
+	//the order matters
+        double cos = (x2*x2 + y2*y2 - x1*x2 - y1*y2 - x2*x3 - y2*y3 + x1*x3 + y1*y3)/(Math.sqrt(squareDistance(x1, y1, x2, y2))*Math.sqrt(squareDistance(x2, y2, x3, y3)));
+        if(cos > 1) return 0;
+        if(cos < -1) return Math.PI;
+        return Math.acos(cos);
+    }
+
 
     /**
      * If we had a line crossing through point 'base' and having the direction 'dir', this function returns the
@@ -331,6 +355,11 @@ public class VectorGeometry {
     }
 
     public static boolean isBetweenPoints(VectorGeometry point, VectorGeometry a, VectorGeometry b){
+        return a.distance(b) + 1 > point.distance(a) + point.distance(b);
+    }
+
+    public static boolean isBetweenPoints(VectorGeometry a, VectorGeometry b){
+        VectorGeometry point = new VectorGeometry();
         return a.distance(b) + 1 > point.distance(a) + point.distance(b);
     }
 

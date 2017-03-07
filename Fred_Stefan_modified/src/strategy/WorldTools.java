@@ -17,6 +17,11 @@ public class WorldTools {
         return (point.x > halfWidth - 60) && point.y < 60 && point.y > -60;
     }
 
+    public static boolean isPointInEnemyDefenceArea2(VectorGeometry point){
+        double halfWidth = Constants.PITCH_WIDTH/4;
+        return (point.x > halfWidth - 45) /*&& point.y < 60 && point.y > -60*/;
+    }
+
     private static int YFACTOR = 1;
 
 

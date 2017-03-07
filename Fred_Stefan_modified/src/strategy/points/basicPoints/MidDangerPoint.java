@@ -7,7 +7,6 @@ import vision.Ball;
 import vision.Robot;
 import vision.RobotType;
 import vision.constants.Constants;
-import vision.robotAnalysis.newRobotAnalysis.PatternMatcher;
 import vision.tools.VectorGeometry;
 
 /**
@@ -60,5 +59,10 @@ public class MidDangerPoint extends DynamicPointBase {
     @Override
     public int getY() {
         return this.y;
+    }
+
+    @Override
+    public boolean isBetweenPoints(VectorGeometry x, VectorGeometry y) {
+        return false;
     }
 }

@@ -1,10 +1,10 @@
 package strategy.actions;
 
-import strategy.GUI;
 import strategy.Strategy;
 import strategy.WorldTools;
 import strategy.actions.other.DefendGoal;
 import strategy.actions.other.GoToSafeLocation;
+import strategy.actions.other.AlignWithBallAndGoal;
 import strategy.actions.offense.OffensiveKick;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
@@ -14,11 +14,12 @@ import vision.RobotType;
 import vision.constants.Constants;
 import vision.tools.VectorGeometry;
 
+
 /**
  * Created by Simon Rovder
  */
 enum BehaviourEnum{
-    DEFEND, SHUNT, KICK, SAFE, EMPTY
+    DEFEND, SHUNT, KICK, SAFE, ALIGN, EMPTY
 }
 
 /**
@@ -60,6 +61,9 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             case SAFE:
                 this.enterAction(new GoToSafeLocation(this.robot), 0, 0);
                 break;
+            case ALIGN:
+                this.enterAction(new AlignWithBallAndGoal(this.robot), 0, 0);
+                break;
 
         }
     }
@@ -70,12 +74,22 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
         if(ball == null){
             this.nextState = BehaviourEnum.DEFEND;
         } else {
+            VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
+            VectorGeometry enemyGoal = new VectorGeometry(Constants.PITCH_WIDTH/2, 0);
             Robot us = Strategy.world.getRobot(this.robot.robotType);
             Robot friend = Strategy.world.getRobot(this.robot.robotType.FRIEND_1);
+            Robot foe1 = Strategy.world.getRobot(this.robot.robotType.FOE_1);
+            Robot foe2 = Strategy.world.getRobot(this.robot.robotType.FOE_2);
             System.out.println("In strategy chooser");
 
             if(us == null){
                 System.out.println("Fuck this shit");
+
+            } else
+
+                if(us.location.distance(ourGoal) > ball.location.distance(ourGoal)){
+                System.out.println("GOAL IS OPEN !!! RETREATING !!");
+                this.nextState = BehaviourEnum.SAFE;
 
             } else if(friend == null){
                 System.out.println("No ally");
@@ -83,13 +97,46 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
                 defend = false;
 
             } else if(us.location.distance(ball.location) < friend.location.distance(ball.location)){
-                System.out.println("kicking");
-                this.nextState = BehaviourEnum.KICK;
-                defend = false;
+                if(WorldTools.isPointInEnemyDefenceArea2(ball.location)) {
+                    if(us.location.distance(ball.location) > foe1.location.distance(ball.location) || us.location.distance(ball.location) > foe2.location.distance(ball.location)) {
+                        System.out.println("An enemy is closer to the ball than me / defending");
+                        this.nextState = BehaviourEnum.DEFEND;
+                        defend = true;
+
+                    }
+                    else{
+                        System.out.println("I'm closer to ball than enemies / kicking");
+                        this.nextState = BehaviourEnum.KICK;
+                        defend = false;
+                    }
+                } else{
+                    System.out.println("kicking");
+                    this.nextState = BehaviourEnum.KICK;
+                    defend = false;
+                }
             } else {
                 this.nextState = BehaviourEnum.DEFEND;
                 defend = true;
             }
+        }
+        if (defend == true) {
+            Robot us = Strategy.world.getRobot(this.robot.robotType);
+            VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
+            VectorGeometry v1 = new VectorGeometry(ball.location , us.location);
+            VectorGeometry v2 = new VectorGeometry(ourGoal , us.location);
+            if (v1.isCollinear(v2)){
+                if (us.location.isBetweenPoints(ball.location, ourGoal))
+                    System.out.println("defend-I am aligned");
+            }
+            else {
+                System.out.println("defend- I have to get aligned");
+                this.nextState = BehaviourEnum.ALIGN;
+            }
+            if(WorldTools.isPointInEnemyDefenceArea2(ball.location)){
+                System.out.println("defend- Go closer to gate");
+                this.nextState = BehaviourEnum.DEFEND;
+            }
+
         }
         return this.nextState;
     }

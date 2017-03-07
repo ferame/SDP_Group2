@@ -5,6 +5,7 @@ import strategy.points.DynamicPointBase;
 import vision.Ball;
 import vision.Robot;
 import vision.RobotType;
+import vision.tools.VectorGeometry;
 
 /**
  * Created by Simon Rovder
@@ -38,5 +39,10 @@ public class BallPoint extends DynamicPointBase {
     @Override
     public int getY() {
         return this.y;
+    }
+
+    @Override
+    public boolean isBetweenPoints(VectorGeometry x, VectorGeometry y) {
+        return false;
     }
 }
