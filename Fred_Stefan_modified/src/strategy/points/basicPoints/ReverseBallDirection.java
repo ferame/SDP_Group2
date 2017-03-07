@@ -33,4 +33,10 @@ public class ReverseBallDirection extends DynamicPointBase {
     public int getY() {
         return this.y;
     }
+
+    @Override
+    public boolean isBetweenPoints(VectorGeometry x, VectorGeometry y) {
+        return false;
+    }
+
 }

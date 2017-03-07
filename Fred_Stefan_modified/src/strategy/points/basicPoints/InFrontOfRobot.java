@@ -1,9 +1,7 @@
 package strategy.points.basicPoints;
 
 import strategy.Strategy;
-import strategy.points.DynamicPoint;
 import strategy.points.DynamicPointBase;
-import vision.DynamicWorld;
 import vision.Robot;
 import vision.RobotAlias;
 import vision.RobotType;
@@ -49,5 +47,10 @@ public class InFrontOfRobot extends DynamicPointBase {
     @Override
     public int getY() {
         return this.y;
+    }
+
+    @Override
+    public boolean isBetweenPoints(VectorGeometry x, VectorGeometry y) {
+        return false;
     }
 }

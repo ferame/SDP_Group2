@@ -1,6 +1,7 @@
 package strategy.points.basicPoints;
 
 import strategy.points.DynamicPointBase;
+import vision.tools.VectorGeometry;
 
 /**
  * Created by Simon Rovder
@@ -25,5 +26,10 @@ public class ConstantPoint extends DynamicPointBase {
     @Override
     public int getY() {
         return this.y;
+    }
+
+    @Override
+    public boolean isBetweenPoints(VectorGeometry x, VectorGeometry y) {
+        return false;
     }
 }

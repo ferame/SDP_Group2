@@ -215,7 +215,7 @@ public class SDPPort extends JFrame implements PortListener, ActionListener{
             SDPConsole.writeln("There is no Expected Response in the Communications class.. This is very very bad, pls fix.");
             return;
         }
-        String exp = this.expectedResponse;
+        final String exp = this.expectedResponse;
         if(e.getSource() == this.connectButton){
             this.visualiseConnect(ConnectionStates.CONNECTING);
             (new Thread() {
