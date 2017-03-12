@@ -17,7 +17,10 @@ public class VectorGeometry {
     }
 
     public VectorGeometry( VectorGeometry p1, VectorGeometry p2){
-        this( p1.getX() - p2.getX(), p1.getY() - p2.getY() );
+        //this.x = p1.getX() - p2.getX();
+        //this.y = p1.getY() - p2.getY();
+        this( p1.getX() - p2.getX(), p1.getY() - p2.getY());
+
     }
 
     public double getX(){

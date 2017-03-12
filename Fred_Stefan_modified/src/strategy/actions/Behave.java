@@ -2,10 +2,10 @@ package strategy.actions;
 
 import strategy.Strategy;
 import strategy.WorldTools;
+import strategy.actions.offense.OffensiveKick;
+import strategy.actions.other.AlignWithBallAndGoal;
 import strategy.actions.other.DefendGoal;
 import strategy.actions.other.GoToSafeLocation;
-import strategy.actions.other.AlignWithBallAndGoal;
-import strategy.actions.offense.OffensiveKick;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import vision.Ball;

@@ -1,11 +1,10 @@
 package strategy.actions.other;
 
-import communication.ports.robotPorts.*;
 import strategy.Strategy;
 import strategy.actions.ActionBase;
 import strategy.actions.ActionException;
 import strategy.points.DynamicPoint;
-import strategy.robots.*;
+import strategy.robots.RobotBase;
 import vision.Ball;
 import vision.Robot;
 import vision.RobotType;
@@ -34,16 +33,16 @@ public class AlignWithBallAndGoal extends ActionBase {
 
     @Override
     public void tok() throws ActionException {
-        Robot us = Strategy.world.getRobot(RobotType.FRIEND_1);
-        Ball ball = Strategy.world.getLastKnownBall();
+        Robot me = Strategy.world.getRobot(RobotType.FRIEND_2);
+        Ball ball = Strategy.world.getBall();
         VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
 
-        if(us == null){
+        if(me == null){
             this.enterState(0);
             return;
         }
 
-        if((VectorGeometry.distance(this.point.getX(), this.point.getY(), us.location.x, us.location.y) < 10))
+        if((VectorGeometry.distance(this.point.getX(), this.point.getY(), me.location.x, me.location.y) < 10))
             if (this.point.isBetweenPoints(ourGoal,ball.location))
                 this.enterState(2);
         else {
@@ -56,12 +55,12 @@ public class AlignWithBallAndGoal extends ActionBase {
 
     public static boolean aligned(){
 
-        Robot us  = Strategy.world.getRobot(RobotType.FRIEND_1);
-        Ball ball = Strategy.world.getLastKnownBall();
+        Robot me  = Strategy.world.getRobot(RobotType.FRIEND_2);
+        Ball ball = Strategy.world.getBall();
         VectorGeometry ourGoal = new VectorGeometry(-Constants.PITCH_WIDTH/2, 0);
-        VectorGeometry v1 = new VectorGeometry(ball.location , us.location);
-        VectorGeometry v2 = new VectorGeometry(ourGoal , us.location);
-        if(us == null || ball == null || ourGoal == null) return false;
+        VectorGeometry v1 = new VectorGeometry(ball.location , me.location);
+        VectorGeometry v2 = new VectorGeometry(ourGoal , me.location);
+        if(me == null || ball == null || ourGoal == null) return false;
         return v1.isCollinear(v2);
     }
 }
