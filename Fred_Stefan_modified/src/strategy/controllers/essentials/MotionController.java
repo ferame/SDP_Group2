@@ -87,10 +87,10 @@ public class MotionController extends ControllerBase {
 //            VectorGeometry destination = determineDestination(us, destination);;
 //            rotate(us, destination, true);
         Boolean strategy = Behave.defend;
-        if (strategy) defend(us);
-        else attack(us);
+        //if (strategy) defend(us);
+        //else attack(us);
         //attack(us);
-        //defend(us);
+        defend(us);
     }
 
     private void attack(Robot us) {
@@ -422,7 +422,25 @@ public class MotionController extends ControllerBase {
         VectorGeometry ballToGoal = ourGoal.clone();
         ballToGoal.minus(ball).multiply(0.5);
         VectorGeometry ourAim = ball.clone().plus(ballToGoal);
-        //VectorGeometry ourAim = temp.minus(ourRobot);
+
+        boolean shouldStop = false;
+
+        if (us.location.distance(ourAim) < 5) {
+            // option 1: make robot stop
+            //this.robot.port.stop();
+            //return;
+
+            System.out.println("Moving towards ball");
+
+            //option 2: make robot move closer to ball
+            VectorGeometry usToBall = ball.clone().minus(ourRobot);
+            //double length = usToBall.length();
+            //usToBall.setLength(length-2);
+            ourAim = ball;
+            //ourAim = ourRobot.clone().plus(usToBall);
+
+        }
+
         NavigationInterface navigation = new AStarNavigation();
         navigation.setDestination(ourAim);
         navigation.setHeading(ball);
@@ -442,10 +460,15 @@ public class MotionController extends ControllerBase {
 
         if (us.location.distance(ourAim) < 20) factor = 0.5;
 
-        if (us.location.distance(ourAim) > 10) {
+        if (us.location.distance(ourAim) > 5) {
+            System.out.println("Ball: " + ball.x + " " + ball.y);
+            System.out.println("Aim: " + ourAim.x + " " + ourAim.y);
+            System.out.println("Distance to aim: " + us.location.distance(ourAim));
             this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
         }
-        else {this.robot.port.stop();}
+        else {
+            this.robot.port.stop();
+        }
 
     }
 
