@@ -87,13 +87,15 @@ public class MotionController extends ControllerBase {
 //            VectorGeometry destination = determineDestination(us, destination);;
 //            rotate(us, destination, true);
         Boolean strategy = Behave.defend;
-        //if (strategy) defend(us);
-        //else attack(us);
+        if (strategy) defend(us);
+        else attack(us);
         //attack(us);
-        defend(us);
+        //defend(us);
     }
 
     private void attack(Robot us) {
+
+        System.out.println(haveBall);
 
         NavigationInterface navigation;
 
@@ -310,7 +312,7 @@ public class MotionController extends ControllerBase {
             for(int i=0;i<8;i++) {
                 this.robot.port.stop();
             }
-            Thread.sleep(1000);
+            Thread.sleep(500);
             for (int i = 0; i < 8; i++) {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
                 ((FredRobotPort) this.robot.port).propeller(100);
@@ -338,7 +340,6 @@ public class MotionController extends ControllerBase {
     private VectorGeometry determineDestination(Robot us, VectorGeometry oldDestination) {
 
         if (!haveBall) {
-            System.out.println("Trying to find ball!");
             return oldDestination;
         }
 
@@ -423,9 +424,11 @@ public class MotionController extends ControllerBase {
         ballToGoal.minus(ball).multiply(0.5);
         VectorGeometry ourAim = ball.clone().plus(ballToGoal);
 
-        boolean shouldStop = false;
+        VectorGeometry usToBall = ball.clone().minus(ourRobot);
 
-        if (us.location.distance(ourAim) < 5) {
+        boolean goToMidpoint = true;
+
+        if (VectorGeometry.radToDeg(VectorGeometry.angle(ballToGoal.clone().negate(), usToBall)) < 8) {
             // option 1: make robot stop
             //this.robot.port.stop();
             //return;
@@ -433,17 +436,19 @@ public class MotionController extends ControllerBase {
             System.out.println("Moving towards ball");
 
             //option 2: make robot move closer to ball
-            VectorGeometry usToBall = ball.clone().minus(ourRobot);
-            //double length = usToBall.length();
-            //usToBall.setLength(length-2);
-            ourAim = ball;
-            //ourAim = ourRobot.clone().plus(usToBall);
+            double length = usToBall.length();
+            usToBall.setLength(length-10);
+            ourAim = ourRobot.clone().plus(usToBall);
+            goToMidpoint = false;
 
+        }
+        else {
+            System.out.println("MIDPOINT");
         }
 
         NavigationInterface navigation = new AStarNavigation();
         navigation.setDestination(ourAim);
-        navigation.setHeading(ball);
+        navigation.setHeading(usToBall);
 
         VectorGeometry force = navigation.getForce();
         if (force == null) {
@@ -453,21 +458,19 @@ public class MotionController extends ControllerBase {
         }
 
         VectorGeometry robotHeading = VectorGeometry.fromAngular(us.location.direction, 10, null);
-        VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, ourAim);
+        VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, usToBall);
         double rotation = VectorGeometry.signedAngle(robotToPoint, robotHeading);
 
         double factor = 1;
 
         if (us.location.distance(ourAim) < 20) factor = 0.5;
 
-        if (us.location.distance(ourAim) > 5) {
-            System.out.println("Ball: " + ball.x + " " + ball.y);
-            System.out.println("Aim: " + ourAim.x + " " + ourAim.y);
-            System.out.println("Distance to aim: " + us.location.distance(ourAim));
-            this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
+        //System.out.println(us.location.distance(ball));
+        if (!goToMidpoint && us.location.distance(ball) < 40) {
+            this.robot.port.stop();
         }
         else {
-            this.robot.port.stop();
+            this.robot.drive.move(this.robot.port, us.location, force, rotation, factor);
         }
 
     }
