@@ -130,7 +130,7 @@ public class MotionController extends ControllerBase {
 
             }
 
-            VectorGeometry usToDestination = destination.clone().minus(us.location);
+            //VectorGeometry usToDestination = destination.clone().minus(us.location).negate();
 
 //            System.out.println(us.location.distance(destination));
             // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
@@ -138,18 +138,18 @@ public class MotionController extends ControllerBase {
                 //StaticVariables.ballkicks = 0;
                 navigation = new AStarNavigation();
 //                navigation = new PotentialFieldNavigation();
-                navigation.setHeading(usToDestination);
+                navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
 //                System.out.println("A* Prop down");
                 for (int i = 0; i < 8; i++) {
                     ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(false);
                 }
 
-            } else if (us.location.distance(destination) > 21.5 && !haveBall /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
+            } else if (us.location.distance(destination) > 21 && !haveBall /*- StaticVariables.ballkicks * 3*/ && us.location.distance(destination) < 55) {
                 navigation = new AStarNavigation();
                 //StaticVariables.haveBall = false;
                 //navigation = new PotentialFieldNavigation();
-                navigation.setHeading(usToDestination);
+                navigation.setHeading(destination);
                 GUI.gui.searchType.setText("A*");
                 System.out.println("Closer to ball: " + us.location.distance(destination));
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
@@ -166,6 +166,7 @@ public class MotionController extends ControllerBase {
             } else {
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
                 destination = determineDestination(us, destination);
+                //usToDestination = destination.clone().minus(us.location).negate();
                 System.out.println(haveBall);
                 if (haveBall/* && StaticVariables.ballkicks == 0*/) {
                     for (int i = 0; i < 8; i++) {
@@ -181,7 +182,7 @@ public class MotionController extends ControllerBase {
                         navigation = new AStarNavigation();
                         //StaticVariables.haveBall = false;
                         //navigation = new PotentialFieldNavigation();
-                        navigation.setHeading(usToDestination);
+                        navigation.setHeading(destination);
                         GUI.gui.searchType.setText("A*");
                         System.out.println("Move before rotating " + us.location.distance(destination));
 
@@ -468,7 +469,7 @@ public class MotionController extends ControllerBase {
 
         //System.out.println(us.location.distance(ball));
         //if (!goToMidpoint && us.location.distance(ball) < 40) {
-        if (us.location.distance(ourAim) < 5) {
+        if (us.location.distance(ourAim) < 7) {
             this.robot.port.stop();
         }
         else {
