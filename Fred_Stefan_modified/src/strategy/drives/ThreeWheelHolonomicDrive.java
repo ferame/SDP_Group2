@@ -80,8 +80,8 @@ public class ThreeWheelHolonomicDrive implements DriveInterface{
         assert(port instanceof ThreeWheelHolonomicRobotPort);
 
         double back = 0;
-        double left = 50;
-        double right = 50;
+        double left = 75;
+        double right = 75;
 
         System.out.println("Moving forward!");
 
