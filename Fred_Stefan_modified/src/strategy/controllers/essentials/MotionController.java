@@ -95,8 +95,6 @@ public class MotionController extends ControllerBase {
 
     private void attack(Robot us) {
 
-        System.out.println(haveBall);
-
         NavigationInterface navigation;
 
         VectorGeometry heading = null;
@@ -131,13 +129,16 @@ public class MotionController extends ControllerBase {
                 //System.out.println("Check potential obstacle");
 
             }
+
+            VectorGeometry usToDestination = destination.clone().minus(us.location);
+
 //            System.out.println(us.location.distance(destination));
             // Robot is moving towards the ball. Why is "intersects" commented and what does it do ?
             if ( /*intersects ||  */ us.location.distance(destination) > 55 && !haveBall) {
                 //StaticVariables.ballkicks = 0;
                 navigation = new AStarNavigation();
 //                navigation = new PotentialFieldNavigation();
-                navigation.setHeading(destination);
+                navigation.setHeading(usToDestination);
                 GUI.gui.searchType.setText("A*");
 //                System.out.println("A* Prop down");
                 for (int i = 0; i < 8; i++) {
@@ -148,7 +149,7 @@ public class MotionController extends ControllerBase {
                 navigation = new AStarNavigation();
                 //StaticVariables.haveBall = false;
                 //navigation = new PotentialFieldNavigation();
-                navigation.setHeading(destination);
+                navigation.setHeading(usToDestination);
                 GUI.gui.searchType.setText("A*");
                 System.out.println("Closer to ball: " + us.location.distance(destination));
                 ((Fred) this.robot).PROPELLER_CONTROLLER.setActive(true);
@@ -180,7 +181,7 @@ public class MotionController extends ControllerBase {
                         navigation = new AStarNavigation();
                         //StaticVariables.haveBall = false;
                         //navigation = new PotentialFieldNavigation();
-                        navigation.setHeading(destination);
+                        navigation.setHeading(usToDestination);
                         GUI.gui.searchType.setText("A*");
                         System.out.println("Move before rotating " + us.location.distance(destination));
 
@@ -284,14 +285,14 @@ public class MotionController extends ControllerBase {
             //System.out.println("kickforce" + force);
             kick(us, (int) Math.round(force));
         } else if (rotation < 10 && rotation > -10 && !kick) {
-            /*try {
-                //this.robot.drive.moveForward(this.robot.port);
-                //Thread.sleep(200);
+            try {
+                this.robot.drive.moveForward(this.robot.port);
+                Thread.sleep(200);
                 catchBall(us);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-            }*/
-            catchBall(us);
+            }
+            //catchBall(us);
         } else {
             if (rotation < 0) this.robot.drive.rotate(this.robot.port, rotation);
             else this.robot.drive.rotate(this.robot.port, rotation);
@@ -426,7 +427,7 @@ public class MotionController extends ControllerBase {
 
         VectorGeometry usToBall = ball.clone().minus(ourRobot);
 
-        boolean goToMidpoint = true;
+        /*boolean goToMidpoint = true;
 
         if (VectorGeometry.radToDeg(VectorGeometry.angle(ballToGoal.clone().negate(), usToBall)) < 8) {
             // option 1: make robot stop
@@ -444,7 +445,7 @@ public class MotionController extends ControllerBase {
         }
         else {
             System.out.println("MIDPOINT");
-        }
+        }*/
 
         NavigationInterface navigation = new AStarNavigation();
         navigation.setDestination(ourAim);
@@ -466,7 +467,8 @@ public class MotionController extends ControllerBase {
         if (us.location.distance(ourAim) < 20) factor = 0.5;
 
         //System.out.println(us.location.distance(ball));
-        if (!goToMidpoint && us.location.distance(ball) < 40) {
+        //if (!goToMidpoint && us.location.distance(ball) < 40) {
+        if (us.location.distance(ourAim) < 5) {
             this.robot.port.stop();
         }
         else {

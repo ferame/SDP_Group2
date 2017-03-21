@@ -97,11 +97,20 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
             } else if(friend == null){
                 System.out.println("No ally");
                 this.nextState = BehaviourEnum.KICK;
-                defend = false;
+                    if((foe1 != null && us.location.distance(ball.location) > foe1.location.distance(ball.location)) || (foe2 != null && us.location.distance(ball.location) > foe2.location.distance(ball.location))) {
+                        System.out.println("An enemy is closer to the ball than me / defending");
+                        this.nextState = BehaviourEnum.DEFEND;
+                        defend = true;
+
+                    }
+                    else {
+                        System.out.println("I'm closer to ball than enemies / kicking");
+                        defend = false;
+                    }
 
             } else if(us.location.distance(ball.location) < friend.location.distance(ball.location)){
-                if(WorldTools.isPointInEnemyDefenceArea2(ball.location)) {
-                    if(foe1 != null && foe2!=null && (us.location.distance(ball.location) > foe1.location.distance(ball.location) || us.location.distance(ball.location) > foe2.location.distance(ball.location))) {
+                //if(WorldTools.isPointInEnemyDefenceArea2(ball.location)) {
+                    if((foe1 != null && us.location.distance(ball.location) > foe1.location.distance(ball.location)) || (foe2 != null && us.location.distance(ball.location) > foe2.location.distance(ball.location))) {
                         System.out.println("An enemy is closer to the ball than me / defending");
                         this.nextState = BehaviourEnum.DEFEND;
                         defend = true;
@@ -112,11 +121,11 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
                         this.nextState = BehaviourEnum.KICK;
                         defend = false;
                     }
-                } else{
+                /*} else{
                     System.out.println("kicking");
                     this.nextState = BehaviourEnum.KICK;
                     defend = false;
-                }
+                }*/
             } else {
                     System.out.println("defending");
                 this.nextState = BehaviourEnum.DEFEND;
