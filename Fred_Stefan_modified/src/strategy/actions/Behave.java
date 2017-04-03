@@ -12,6 +12,7 @@ import vision.Ball;
 import vision.Robot;
 import vision.RobotType;
 import vision.constants.Constants;
+import vision.gui.MiscellaneousSettings;
 import vision.tools.VectorGeometry;
 
 /**
@@ -29,6 +30,7 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
 
     public static boolean RESET = true;
     public static boolean defend = true;
+    public static boolean ULTIMATE_DEFENCE = true;
 
 
     public Behave(RobotBase robot){
@@ -66,6 +68,18 @@ public class Behave extends StatefulActionBase<BehaviourEnum> {
 
     @Override
     protected BehaviourEnum getState() {
+
+        if (ULTIMATE_DEFENCE) {
+            System.out.println("Hardcoded defence! Fuck those pancakes!");
+            Robot us = Strategy.world.getRobot(this.robot.robotType);
+            this.robot.drive.moveToCenter(this.robot.port, us.location.y < 0);
+            if (Math.abs(us.location.y) < 15) {
+                this.robot.port.stop();
+                ULTIMATE_DEFENCE = false;
+                MiscellaneousSettings.miscSettings.setUltimateDefenceToFalse();
+            }
+            return this.nextState;
+        }
 
         String distanceSensor = this.robot.port.getInput();
         boolean res1 = distanceSensor.contains("0");

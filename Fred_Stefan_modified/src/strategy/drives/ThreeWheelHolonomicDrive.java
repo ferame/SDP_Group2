@@ -89,4 +89,23 @@ public class ThreeWheelHolonomicDrive implements DriveInterface{
 
     }
 
+    public void moveToCenter(RobotPort port, boolean dir) {
+        assert(port instanceof ThreeWheelHolonomicRobotPort);
+
+        int y_axis =1;
+        if (!dir) y_axis = -1;
+
+        double a01 = -0.33, a11 = -0.33, a21 = 0.67;
+        double back = a21 * -y_axis;
+        double left = a11 * -y_axis;
+        double right = a01 * -y_axis;
+
+        double normalizer = Math.max(Math.max(Math.abs(left), Math.abs(right)), Math.abs(back));
+        back = back/normalizer * 100;
+        left = left/normalizer * 100;
+        right = right/normalizer * 100;
+
+        ((ThreeWheelHolonomicRobotPort) port).threeWheelHolonomicMotion(back, left, -right);
+    }
+
 }

@@ -178,7 +178,7 @@ public class MotionController extends ControllerBase {
                     for (int i = 0; i < 8; i++) {
                         ((FredRobotPort) this.robot.port).propeller(100);
                     }
-                    if (us.location.distance(destination) > 19.5){
+                    /*if (us.location.distance(destination) > 19.5){
                         navigation = new AStarNavigation();
                         //StaticVariables.haveBall = false;
                         //navigation = new PotentialFieldNavigation();
@@ -186,11 +186,11 @@ public class MotionController extends ControllerBase {
                         GUI.gui.searchType.setText("A*");
                         System.out.println("Move before rotating " + us.location.distance(destination));
 
-                    } else {
+                    } else {*/
                         rotate(us, destination, false);
                         return;
 
-                    }
+                    //}
                 }
             }
             // Potential field navigation is disabled for now

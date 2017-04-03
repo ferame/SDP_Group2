@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
+import strategy.actions.Behave;
 import vision.RobotAlias;
 import vision.RobotType;
 import vision.colorAnalysis.SDPColor;
@@ -34,6 +35,7 @@ public class MiscellaneousSettings extends JPanel implements ActionListener, Sav
 	private JCheckBox friendOneIsGreen;
 	private JCheckBox foeOneIsGreen;
 	private JCheckBox assumeYellow;
+	private JCheckBox ultimateDefence;
 
 	
 	private MiscellaneousSettings(){
@@ -75,6 +77,11 @@ public class MiscellaneousSettings extends JPanel implements ActionListener, Sav
 		this.assumeYellow.addActionListener(this);
 		this.add(this.assumeYellow);
 
+		this.ultimateDefence = new JCheckBox("Ultimate Defence");
+		this.ultimateDefence.setBounds(220, 140, 200, 30);
+		this.ultimateDefence.addActionListener(this);
+		this.add(this.ultimateDefence);
+		
 		int offset = 0;
 
 		for(RobotType type : RobotType.values()){
@@ -97,12 +104,18 @@ public class MiscellaneousSettings extends JPanel implements ActionListener, Sav
 	}
 
 	private void checkBoxesToValues(){
+		System.out.println("Checking settings...");
 		Distortion.ROTATE_PITCH = this.flipPitch.isSelected();
 		RobotColorSettings.FRIEND_COLOR = this.friendsAreYellow.isSelected() ? SDPColor.YELLOW : SDPColor.BLUE;
 		RobotColorSettings.FOE_COLOR = this.friendsAreYellow.isSelected() ? SDPColor.BLUE : SDPColor.YELLOW;
 		RobotColorSettings.FRIEND_1_IS_GREEN = this.friendOneIsGreen.isSelected();
 		RobotColorSettings.FOE_1_IS_GREEN = this.foeOneIsGreen.isSelected();
 		RobotColorSettings.ASSUME_YELLOW = this.assumeYellow.isSelected();
+		Behave.ULTIMATE_DEFENCE = this.ultimateDefence.isSelected();
+	}
+
+	public void setUltimateDefenceToFalse() {
+		this.ultimateDefence.setSelected(false);
 	}
 
 	@Override
